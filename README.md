@@ -1,6 +1,6 @@
 # BetterChunkLoader Sponge
 
-This project is a fork of [BetterChunkLoader-ShadowNode](https://github.com/KaiKikuchi/BetterChunkLoader)
+This project is a fork of [BetterChunkLoader-ShadowNode](https://bitbucket.org/shadownode/betterchunkloader)
 Which is a continuation of [BetterChunkLoader](https://github.com/KaiKikuchi/BetterChunkLoader) for [SpongeForge](https://github.com/SpongePowered/SpongeForge)
 
 Licence: [MIT](LICENSE.md) Permission to change this license to MIT was given by KaiKikuchi
