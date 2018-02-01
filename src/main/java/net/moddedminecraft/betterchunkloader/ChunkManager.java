@@ -31,8 +31,8 @@ public class ChunkManager {
             Map<String, Integer> ticketConstraints = (Map<String, Integer>) getField(forgeChunkManager, "ticketConstraints").get(null);
             Map<String, Integer> chunkConstraints = (Map<String, Integer>) getField(forgeChunkManager, "chunkConstraints").get(null);
 
-            ticketConstraints.put("net/moddedminecraft/betterchunkloader", Integer.MAX_VALUE);
-            chunkConstraints.put("net/moddedminecraft/betterchunkloader", Integer.MAX_VALUE);
+            ticketConstraints.put("betterchunkloader", Integer.MAX_VALUE);
+            chunkConstraints.put("betterchunkloader", Integer.MAX_VALUE);
 
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassNotFoundException ex) {
             plugin.getLogger().error("ChunkManager failed to force chunk constraints", ex);
