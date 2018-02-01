@@ -365,28 +365,28 @@ public class MessagesConfig {
                     @Setting("All")
                     public List<String> all = Arrays.asList(
                             "&3Owner: &6{owner}",
-                            " &3Type: &6{loaded}",
+                            " &3Type: &6{type}",
                             " &3Loaded: &6{loaded}"
                     );
 
                     @Setting("Alwayson")
                     public List<String> alwayson = Arrays.asList(
                             "&3Owner: &6{owner}",
-                            " &3Type: &6{loaded}",
+                            " &3Type: &6{type}",
                             " &3Loaded: &6{loaded}"
                     );
 
                     @Setting("Online")
                     public List<String> online = Arrays.asList(
                             "&3Owner: &6{owner}",
-                            " &3Type: &6{loaded}",
+                            " &3Type: &6{type}",
                             " &3Loaded: &6{loaded}"
                     );
 
                     @Setting("Self")
                     public List<String> self = Arrays.asList(
                             "&3Owner: &6{owner}",
-                            " &3Type: &6{loaded}",
+                            " &3Type: &6{type}",
                             " &3Loaded: &6{loaded}"
                     );
                 }
