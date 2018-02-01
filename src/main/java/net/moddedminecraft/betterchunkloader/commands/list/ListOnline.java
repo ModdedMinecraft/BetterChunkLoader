@@ -123,7 +123,7 @@ public class ListOnline implements CommandExecutor {
                 HashMap<String, String> args = new HashMap<>();
                 args.put("location", Utilities.getReadableLocation(worldUUID, vector3i));
 
-                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.teleport));
+                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.teleport, args));
             }
         };
     }
