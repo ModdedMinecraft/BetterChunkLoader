@@ -43,7 +43,7 @@ public class Permissions {
      * Sub permissions for betterchunkloader.commands.balance
      *
      * betterchunkloader.commands.balance.base
-     * betterchunkloader.commands.balance.other
+     * betterchunkloader.commands.balance.others
      */
     public static final String COMMAND_BALANCE = "betterchunkloader.commands.balance";
 
