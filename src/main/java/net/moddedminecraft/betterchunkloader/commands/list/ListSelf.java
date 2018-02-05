@@ -79,11 +79,11 @@ public class ListSelf implements CommandExecutor {
         Text.Builder send = Text.builder();
         send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.self, args));
 
-        if (sender.hasPermission(Permissions.TELEPORT)) {
-            send.onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.self, args)));
-        }
+        send.onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.self, args)));
 
-        send.onClick(TextActions.executeCallback(teleportTo(chunkLoader.getWorld(), chunkLoader.getLocation())));
+        if (sender.hasPermission(Permissions.TELEPORT)) {
+            send.onClick(TextActions.executeCallback(teleportTo(chunkLoader.getWorld(), chunkLoader.getLocation())));
+        }
 
         return send.build();
     }
