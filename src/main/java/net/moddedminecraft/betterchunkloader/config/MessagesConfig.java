@@ -324,13 +324,16 @@ public class MessagesConfig {
                 public static class Format {
 
                     @Setting("EditAction")
-                    public String editAction = "&8[&6Edit&8] &f- ";
+                    public String editAction = "&8[&6Edit&8]";
 
                     @Setting("Hover")
                     public Hover hover = new Hover();
 
                     @ConfigSerializable
                     public static class Hover {
+
+                        @Setting("EditAction")
+                        public String editAction = "&eClick here to edit this chunkloader";
 
                         @Setting("All")
                         public String all =

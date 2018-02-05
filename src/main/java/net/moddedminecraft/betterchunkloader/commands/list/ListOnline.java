@@ -101,7 +101,10 @@ public class ListOnline implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (chunkLoader.canEdit(player)) {
-                send.append(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.editAction)).onClick(TextActions.executeCallback(editLoader(chunkLoader)));
+                send.append(Text.builder().append(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.editAction))
+                        .onClick(TextActions.executeCallback(editLoader(chunkLoader)))
+                        .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.editAction))).build());
+                send.append(Utilities.parseMessage(" &f- "));
             }
         }
 
