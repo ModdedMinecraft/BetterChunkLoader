@@ -323,6 +323,9 @@ public class MessagesConfig {
                 @ConfigSerializable
                 public static class Format {
 
+                    @Setting("EditAction")
+                    public String editAction = "&8[&6Edit&8] &f- ";
+
                     @Setting("Hover")
                     public Hover hover = new Hover();
 

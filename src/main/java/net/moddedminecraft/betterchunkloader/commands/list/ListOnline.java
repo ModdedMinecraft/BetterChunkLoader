@@ -7,6 +7,7 @@ import net.moddedminecraft.betterchunkloader.Permissions;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import net.moddedminecraft.betterchunkloader.data.PlayerData;
+import net.moddedminecraft.betterchunkloader.menu.Menu;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -96,16 +97,31 @@ public class ListOnline implements CommandExecutor {
         args.put("loaded", loaded);
 
         Text.Builder send = Text.builder();
-        send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.online, args));
 
-        send.onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.online, args)));
-
-        if (sender.hasPermission(Permissions.TELEPORT)) {
-            send.onClick(TextActions.executeCallback(teleportTo(chunkLoader.getWorld(), chunkLoader.getLocation())));
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (chunkLoader.canEdit(player)) {
+                send.append(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.editAction)).onClick(TextActions.executeCallback(editLoader(chunkLoader)));
+            }
         }
 
+        if (sender.hasPermission(Permissions.TELEPORT)) {
+            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.all, args))
+                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.all, args)))
+                    .onClick(TextActions.executeCallback(teleportTo(chunkLoader.getWorld(), chunkLoader.getLocation())));
+        } else {
+            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.all, args))
+                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.all, args)));
+        }
 
         return send.build();
+    }
+
+    private Consumer<CommandSource> editLoader(ChunkLoader chunkLoader) {
+        return consumer -> {
+            Player player = (Player) consumer;
+            new Menu(plugin).showMenu(player, chunkLoader);
+        };
     }
 
     private Consumer<CommandSource> teleportTo(UUID worldUUID, Vector3i vector3i) {
