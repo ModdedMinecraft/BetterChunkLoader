@@ -11,6 +11,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,7 +26,7 @@ public class Delete implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
-        Optional<Player> playerName = commandContext.<Player>getOne("player");
+        Optional<User> playerName = commandContext.<User>getOne("player");
         Optional<String> loaderType = commandContext.<String>getOne("type");
 
         HashMap<String, String> args = new HashMap<>();

@@ -9,7 +9,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class Chunks implements CommandExecutor {
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
         String chunksChangeOperatorElement = commandContext.<String>getOne("change").get();
         String loaderTypeElement = commandContext.<String>getOne("type").get();
-        Player playerName = commandContext.<Player>getOne("player").get();
+        User playerName = commandContext.<User>getOne("player").get();
         Integer changeValue = commandContext.<Integer>getOne("value").get();
 
         Optional<UUID> playerUUID = Utilities.getPlayerUUID(playerName.getName());

@@ -10,6 +10,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class Balance implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
-        Optional<Player> playerName = commandContext.<Player>getOne("player");
+        Optional<User> playerName = commandContext.<User>getOne("player");
 
         if (playerName.isPresent()) {
             if (sender.hasPermission(Permissions.COMMAND_BALANCE + ".others")) {
@@ -49,7 +50,7 @@ public class Balance implements CommandExecutor {
         return CommandResult.empty();
     }
 
-    private boolean chunksInfo(CommandSource sender, Player player, boolean other) {
+    private boolean chunksInfo(CommandSource sender, User player, boolean other) {
         Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(player.getUniqueId());
         if (playerData.isPresent()) {
             int defaultOnline = plugin.getConfig().getCore().chunkLoader.online.defaultOnline;

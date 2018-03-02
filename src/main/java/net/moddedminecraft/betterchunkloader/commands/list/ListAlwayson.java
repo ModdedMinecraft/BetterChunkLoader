@@ -15,6 +15,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.world.Location;
@@ -33,7 +34,7 @@ public class ListAlwayson implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
-        Optional<Player> playerName = commandContext.<Player>getOne("player");
+        Optional<User> playerName = commandContext.<User>getOne("player");
 
         List<ChunkLoader> chunkLoaders = new ArrayList<>();
 

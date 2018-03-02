@@ -49,7 +49,7 @@ public class CommandManager {
 
         // /bcl bal (player)
         CommandSpec cmdBalance = CommandSpec.builder()
-                .arguments(GenericArguments.optional(GenericArguments.player(Text.of("player"))))
+                .arguments(GenericArguments.optional(GenericArguments.user(Text.of("player"))))
                 .executor(new Balance(this.plugin))
                 .permission(Permissions.COMMAND_BALANCE + ".base")
                 .build();
@@ -71,7 +71,7 @@ public class CommandManager {
         CommandSpec cmdChunks = CommandSpec.builder()
                 .arguments(
                         GenericArguments.choices(Text.of("change"), changeType),
-                        GenericArguments.player(Text.of("player")),
+                        GenericArguments.user(Text.of("player")),
                         GenericArguments.choices(Text.of("type"), loaderType),
                         GenericArguments.integer(Text.of("value"))
                 )
@@ -87,14 +87,14 @@ public class CommandManager {
 
         // /bcl list alwayson [player]
         CommandSpec cmdListAlwaysOn = CommandSpec.builder()
-                .arguments(GenericArguments.optional(GenericArguments.player(Text.of("player"))))
+                .arguments(GenericArguments.optional(GenericArguments.user(Text.of("player"))))
                 .executor(new ListAlwayson(this.plugin))
                 .permission(Permissions.COMMAND_LIST + ".alwayson")
                 .build();
 
         // /bcl list online [player]
         CommandSpec cmdListOnline = CommandSpec.builder()
-                .arguments(GenericArguments.optional(GenericArguments.player(Text.of("player"))))
+                .arguments(GenericArguments.optional(GenericArguments.user(Text.of("player"))))
                 .executor(new ListOnline(this.plugin))
                 .permission(Permissions.COMMAND_LIST + ".online")
                 .build();
@@ -112,7 +112,7 @@ public class CommandManager {
         CommandSpec cmdDelete = CommandSpec.builder()
                 .arguments(
                         GenericArguments.choices(Text.of("type"), loaderType),
-                        GenericArguments.optional(GenericArguments.player(Text.of("player")))
+                        GenericArguments.optional(GenericArguments.user(Text.of("player")))
                 )
                 .executor(new Delete(this.plugin))
                 .permission(Permissions.COMMAND_DELETE + ".base")
