@@ -44,7 +44,7 @@ import java.util.*;
         authors = {
                 "leelawd93"
         },
-        version = "1.2.1"
+        version = "1.2.2"
 )
 public class BetterChunkLoader {
 
