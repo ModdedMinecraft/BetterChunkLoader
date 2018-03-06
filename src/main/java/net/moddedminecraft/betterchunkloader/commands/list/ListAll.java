@@ -34,6 +34,8 @@ public class ListAll implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
+        Optional<String> loaderTypeOp = commandContext.<String>getOne("type");
+
         List<ChunkLoader> chunkLoaders = new ArrayList<>();
 
         for (World world : Sponge.getServer().getWorlds()) {
@@ -42,7 +44,16 @@ public class ListAll implements CommandExecutor {
 
         List<Text> readableCLs = new ArrayList<>();
         for(ChunkLoader chunkLoader : chunkLoaders) {
-            readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+            if (loaderTypeOp.isPresent()) {
+                String loaderType = loaderTypeOp.get();
+                if (loaderType.equalsIgnoreCase("alwayson") && chunkLoader.isAlwaysOn()) {
+                    readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                } else if (loaderType.equalsIgnoreCase("online") && !chunkLoader.isAlwaysOn()) {
+                    readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                }
+            } else {
+                readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+            }
         }
         if (readableCLs.isEmpty()) {
             readableCLs.add(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.noChunkLoadersFound));

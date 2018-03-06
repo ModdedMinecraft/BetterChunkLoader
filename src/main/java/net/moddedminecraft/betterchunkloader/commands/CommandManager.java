@@ -79,9 +79,10 @@ public class CommandManager {
                 .permission(Permissions.COMMAND_CHUNKS + ".base")
                 .build();
 
-        // /bcl list all
+        // /bcl list all [type]
         CommandSpec cmdListAll = CommandSpec.builder()
                 .executor(new ListAll(this.plugin))
+                .arguments(GenericArguments.optional(GenericArguments.choices(Text.of("type"), loaderType)))
                 .permission(Permissions.COMMAND_LIST + ".all")
                 .build();
 
