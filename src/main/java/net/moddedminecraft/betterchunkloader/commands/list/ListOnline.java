@@ -8,6 +8,7 @@ import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import net.moddedminecraft.betterchunkloader.data.PlayerData;
 import net.moddedminecraft.betterchunkloader.menu.Menu;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -90,6 +91,7 @@ public class ListOnline implements CommandExecutor {
         }
 
         HashMap<String, String> args = new HashMap<>();
+        args.put("ownerabr", StringUtils.abbreviate(playerName, 11));
         args.put("owner", playerName);
         args.put("type", type);
         args.put("location", Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()));
