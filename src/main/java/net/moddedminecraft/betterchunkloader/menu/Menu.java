@@ -2,9 +2,12 @@ package net.moddedminecraft.betterchunkloader.menu;
 
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
@@ -65,7 +68,7 @@ public class Menu {
                 pos++;
                 radius++;
             }
-            player.openInventory(inventory);
+            player.openInventory(inventory, Cause.of(NamedCause.owner(Sponge.getPluginManager().getPlugin("mmcrestrict").get())));
         });
     }
 

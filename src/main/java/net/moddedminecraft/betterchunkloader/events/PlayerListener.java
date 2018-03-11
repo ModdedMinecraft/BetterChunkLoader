@@ -122,7 +122,7 @@ public class PlayerListener {
         }
 
         Optional<ChunkLoader> chunkLoader = plugin.dataManager.getChunkLoaderAt(clickedBlock.getLocation().get());
-        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getId().equalsIgnoreCase(plugin.getConfig().getCore().chunkLoader.wandType)) {
+        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getItem().getType().getId().equalsIgnoreCase(plugin.getConfig().getCore().chunkLoader.wandType)) {
             if (!chunkLoader.isPresent()) {
                 chunkLoader = Optional.of(new ChunkLoader(
                         UUID.randomUUID(),
