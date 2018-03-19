@@ -11,7 +11,6 @@ import net.moddedminecraft.betterchunkloader.data.PlayerData.PlayerDataSerialize
 import net.moddedminecraft.betterchunkloader.data.VectorSerializer;
 import net.moddedminecraft.betterchunkloader.events.PlayerListener;
 import net.moddedminecraft.betterchunkloader.events.WorldListener;
-import net.moddedminecraft.betterchunkloader.menu.MenuListener;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
@@ -105,7 +104,6 @@ public class BetterChunkLoader {
 
             new PlayerListener(this).register();
             new WorldListener(this).register();
-            new MenuListener(this).register();
             new CommandManager(this).register();
 
             getLogger().info("Load complete.");
