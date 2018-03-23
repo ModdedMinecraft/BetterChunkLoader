@@ -1,7 +1,9 @@
 package net.moddedminecraft.betterchunkloader.menu;
 
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
+import net.moddedminecraft.betterchunkloader.Permissions;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -23,6 +25,10 @@ import java.util.function.Consumer;
 public class Menu {
 
     private final BetterChunkLoader plugin;
+
+    private static final ItemType REMOVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.removeItemType).orElse(ItemTypes.REDSTONE_TORCH);
+    private static final ItemType ACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.activeItemType).orElse(ItemTypes.POTION);
+    private static final ItemType INACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.inactiveItemType).orElse(ItemTypes.GLASS_BOTTLE);
 
     public Menu(BetterChunkLoader plugin) {
         this.plugin = plugin;
@@ -47,11 +53,18 @@ public class Menu {
                 lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
                 keys.put(Keys.ITEM_LORE, lores);
                 keys.put(Keys.DISPLAY_NAME, Text.of("Remove"));
-                addMenuOption(inventory, slotPos, ItemTypes.REDSTONE_TORCH, keys);
+                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys);
             }
 
             int pos = 2;
-            for (int radius = 0; radius < 5;) {
+            int maxRadius = 7;
+
+            if (!player.hasPermission(Permissions.UNLLIMITED_CHUNKS)) maxRadius = plugin.getConfig().getCore().menu.maxSize;
+
+            if (maxRadius < 0) maxRadius = 0;
+            if (maxRadius > 7) maxRadius = 7;
+
+            for (int radius = 0; radius < maxRadius;) {
                 Integer chunks = Double.valueOf(Math.pow((2 * radius) + 1, 2)).intValue();
                 SlotPos slotPos = SlotPos.of(pos, 0);
                 HashMap<Key, Object> keys = new HashMap<>();
@@ -61,7 +74,7 @@ public class Menu {
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
                 keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + (radius + 1) + " [Active]" : "Size: " + (radius + 1))));
-                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ItemTypes.POTION : ItemTypes.GLASS_BOTTLE), keys);
+                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 pos++;
                 radius++;
             }

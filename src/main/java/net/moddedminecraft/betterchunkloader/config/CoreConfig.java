@@ -12,8 +12,27 @@ public class CoreConfig {
     @Setting("ChunkLoader")
     public ChunkLoader chunkLoader = new ChunkLoader();
 
+    @Setting("Menu")
+    public Menu menu = new Menu();
+
     @Setting("Title")
     public String title = "&8[&6Chunkloader&8]&r";
+
+    @ConfigSerializable
+    public static class Menu {
+
+        @Setting(value = "MaxSize", comment = "Max chunkloader size to display in the menu. [0-7]")
+        public Integer maxSize = 5;
+
+        @Setting("ActiveRadiusItemType")
+        public String activeItemType = "minecraft:potion";
+
+        @Setting("InactiveRadiusItemType")
+        public String inactiveItemType = "minecraft:glass_bottle";
+
+        @Setting("RemoveItemType")
+        public String removeItemType = "minecraft:redstone_torch";
+    }
 
     @ConfigSerializable
     public static class ChunkLoader {
