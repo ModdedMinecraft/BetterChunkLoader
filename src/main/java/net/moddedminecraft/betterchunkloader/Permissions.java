@@ -58,7 +58,6 @@ public class Permissions {
      * Sub permissions for betterchunkloader.commands.list
      *
      * betterchunkloader.commands.list.base
-     * betterchunkloader.commands.list.self
      * betterchunkloader.commands.list.alwayson
      * betterchunkloader.commands.list.online
      * betterchunkloader.commands.list.all
