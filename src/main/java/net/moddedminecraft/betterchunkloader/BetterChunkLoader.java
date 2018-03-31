@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "betterchunkloader",
@@ -114,12 +115,14 @@ public class BetterChunkLoader {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        int count = 0;
-        count = getChunkLoaderData().stream().filter((chunkLoader) -> (chunkLoader.isLoadable())).map((chunkLoader) -> {
-            getChunkManager().loadChunkLoader(chunkLoader);
-            return chunkLoader;
-        }).map((_item) -> 1).reduce(count, Integer::sum);
-        getLogger().info("Activated " + count + " chunk loaders.");
+        Sponge.getScheduler().createTaskBuilder().delay(config.getCore().chunkLoader.loadDelay, TimeUnit.SECONDS).execute(() -> {
+            int count = 0;
+            count = getChunkLoaderData().stream().filter((chunkLoader) -> (chunkLoader.isLoadable())).map((chunkLoader) -> {
+                getChunkManager().loadChunkLoader(chunkLoader);
+                return chunkLoader;
+            }).map((_item) -> 1).reduce(count, Integer::sum);
+            getLogger().info("Activated " + count + " chunk loaders.");
+        }).submit(this);
     }
 
     @Listener
