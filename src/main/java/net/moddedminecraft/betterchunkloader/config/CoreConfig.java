@@ -18,6 +18,9 @@ public class CoreConfig {
     @ConfigSerializable
     public static class ChunkLoader {
 
+        @Setting(value = "LoadDelay", comment = "Delay before loading chunkloaders during startup. (Seconds).")
+        public Integer loadDelay = 10;
+
         @Setting("Online")
         public Online online = new Online();
 
