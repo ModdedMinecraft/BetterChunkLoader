@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
         authors = {
                 "leelawd93"
         },
-        version = "1.2.3"
+        version = "1.2.4"
 )
 public class BetterChunkLoader {
 
