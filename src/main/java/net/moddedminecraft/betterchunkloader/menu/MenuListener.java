@@ -99,7 +99,7 @@ public class MenuListener {
                         args.put("available", String.valueOf(available));
 
 
-                        if (chunks.get() > available + chunkLoader.getChunks()) {
+                        if (chunks.get() > (available + chunkLoader.getChunks()) - 1) {
                             args.put("needed", String.valueOf(chunks.get()));
                             player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunkLoader.notEnough, args));
                             break;
