@@ -70,7 +70,7 @@ public class Balance implements CommandExecutor {
 
             plugin.getPaginationService().builder()
                     .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.balance.success.items, args))
-                    .title(Utilities.parseMessage(title))
+                    .title(Utilities.parseMessage(title, args))
                     .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.balance.success.padding))
                     .sendTo(sender);
             return true;
