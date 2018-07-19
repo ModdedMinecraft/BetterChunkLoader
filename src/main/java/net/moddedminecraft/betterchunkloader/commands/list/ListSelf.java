@@ -51,7 +51,7 @@ public class ListSelf implements CommandExecutor {
 
         plugin.getPaginationService().builder()
                 .contents(readableCLs)
-                .title(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.title.alwaysOn))
+                .title(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.title.self))
                 .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.padding))
                 .sendTo(sender);
 
