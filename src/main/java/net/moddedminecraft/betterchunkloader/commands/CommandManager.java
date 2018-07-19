@@ -38,6 +38,13 @@ public class CommandManager {
             }
         };
 
+        Map<String, String> flags = new HashMap<String, String>() {
+            {
+                put("expired", "expired");
+                put("active", "active");
+            }
+        };
+
         Map<String, String> changeType = new HashMap<String, String>() {
             {
                 put("set", "set");
@@ -113,7 +120,8 @@ public class CommandManager {
         CommandSpec cmdDelete = CommandSpec.builder()
                 .arguments(
                         GenericArguments.choices(Text.of("type"), loaderType),
-                        GenericArguments.optional(GenericArguments.user(Text.of("player")))
+                        GenericArguments.optional(GenericArguments.user(Text.of("player"))),
+                        GenericArguments.optional(GenericArguments.choices(Text.of("flag"), flags))
                 )
                 .executor(new Delete(this.plugin))
                 .permission(Permissions.COMMAND_DELETE + ".base")

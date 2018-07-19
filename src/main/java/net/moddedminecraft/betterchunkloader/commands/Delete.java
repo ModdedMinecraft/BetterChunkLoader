@@ -28,15 +28,30 @@ public class Delete implements CommandExecutor {
     public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
         Optional<User> playerName = commandContext.<User>getOne("player");
         Optional<String> loaderType = commandContext.<String>getOne("type");
+        Optional<String> flagOp = commandContext.<String>getOne("flag");
 
         HashMap<String, String> args = new HashMap<>();
+        boolean onlyExpired = false;
+        boolean onlyActive = false;
 
         if (!loaderType.isPresent()) {
             sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.usage, args));
             return CommandResult.empty();
         }
 
-        args.put("type", loaderType.get());
+        String flags = "";
+        if (flagOp.isPresent()){
+            if (flagOp.get().equalsIgnoreCase("expired")) {
+                onlyExpired = true;
+                flags = "expired ";
+            }
+            if (flagOp.get().equalsIgnoreCase("active")) {
+                onlyActive = true;
+                flags = "active ";
+            }
+        }
+
+        args.put("type", flags + loaderType.get());
 
         if (playerName.isPresent()) {
             args.put("player", playerName.get().getName());
@@ -54,9 +69,25 @@ public class Delete implements CommandExecutor {
 
                 int success = 0;
                 for (ChunkLoader chunkLoader : clList) {
-                    plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                    plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
-                    success++;
+                    if (onlyExpired && chunkLoader.isAlwaysOn()) {
+                        if (chunkLoader.isExpired()) {
+                            plugin.getChunkManager().unloadChunkLoader(chunkLoader);
+                            plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
+                            success++;
+                        }
+                    }
+                    if (onlyActive) {
+                        if (chunkLoader.isLoadable()) {
+                            plugin.getChunkManager().unloadChunkLoader(chunkLoader);
+                            plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
+                            success++;
+                        }
+                    }
+                    if (!onlyActive && !onlyExpired) {
+                        plugin.getChunkManager().unloadChunkLoader(chunkLoader);
+                        plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
+                        success++;
+                    }
                 }
                 if (success > 0) {
                     try {
