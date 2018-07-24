@@ -24,7 +24,7 @@ public class Info implements CommandExecutor {
         List<ChunkLoader> chunkLoaders = new ArrayList<>(plugin.getChunkLoaderData());
 
         if (chunkLoaders.isEmpty()) {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.info.failure));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksInfoFailure));
             return CommandResult.success();
         }
 
@@ -64,9 +64,9 @@ public class Info implements CommandExecutor {
         args.put("playerCount", String.valueOf(playerCount));
 
         plugin.getPaginationService().builder()
-                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.info.success.items, args))
-                .title(Utilities.parseMessage(plugin.getConfig().getMessages().commands.info.success.title))
-                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.info.success.padding))
+                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().infoItems, args))
+                .title(Utilities.parseMessage(plugin.getConfig().getMessages().infoTitle))
+                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().infoPadding))
                 .sendTo(sender);
 
         return CommandResult.success();

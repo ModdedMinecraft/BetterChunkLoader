@@ -35,7 +35,7 @@ public class Delete implements CommandExecutor {
         boolean onlyActive = false;
 
         if (!loaderType.isPresent()) {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.usage, args));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteUsage, args));
             return CommandResult.empty();
         }
 
@@ -56,12 +56,12 @@ public class Delete implements CommandExecutor {
         if (playerName.isPresent()) {
             args.put("player", playerName.get().getName());
             if (!sender.hasPermission(Permissions.COMMAND_DELETE + ".others")) {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.others.noPermission, args));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersNoPermission, args));
                 return CommandResult.empty();
             }
             Optional<UUID> playerUUID = Utilities.getPlayerUUID(playerName.get().getName());
             if (!playerUUID.isPresent()) {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.noPlayerExists, args));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists, args));
                 return CommandResult.empty();
             }
             if (loaderType.get().equalsIgnoreCase("online") || loaderType.get().equalsIgnoreCase("alwayson")) {
@@ -92,19 +92,19 @@ public class Delete implements CommandExecutor {
                 if (success > 0) {
                     try {
                         plugin.saveData();
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.others.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersSuccess, args));
                         return CommandResult.success();
                     } catch (IOException | ObjectMappingException e) {
                         e.printStackTrace();
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.others.failure, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersFailure, args));
                         return CommandResult.success();
                     }
                 } else {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.others.failure, args));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersFailure, args));
                     return CommandResult.success();
                 }
             } else {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.invalidType, args));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteInvalidType, args));
                 return CommandResult.empty();
             }
         } else {
@@ -122,23 +122,23 @@ public class Delete implements CommandExecutor {
                     if (success > 0) {
                         try {
                             plugin.saveData();
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.own.success, args));
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnSuccess, args));
                             return CommandResult.success();
                         } catch (IOException | ObjectMappingException e) {
                             e.printStackTrace();
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.own.failure, args));
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnFailure, args));
                             return CommandResult.empty();
                         }
                     } else {
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.own.failure, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnFailure, args));
                         return CommandResult.empty();
                     }
                 } else {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.invalidType, args));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteInvalidType, args));
                     return CommandResult.empty();
                 }
             } else {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.delete.consoleError, args));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteConsoleError, args));
                 return CommandResult.empty();
             }
         }

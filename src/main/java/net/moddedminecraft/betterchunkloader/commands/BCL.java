@@ -58,9 +58,9 @@ public class BCL implements CommandExecutor {
         }
 
         plugin.getPaginationService().builder()
-                .title(Utilities.parseMessage(plugin.getConfig().getMessages().commands.usage.title))
+                .title(Utilities.parseMessage(plugin.getConfig().getMessages().usageTitle))
                 .contents(contents)
-                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.usage.padding))
+                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().usagePadding))
                 .sendTo(sender);
     }
 }

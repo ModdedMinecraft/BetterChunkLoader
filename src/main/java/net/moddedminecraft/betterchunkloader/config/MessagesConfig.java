@@ -1,437 +1,295 @@
 package net.moddedminecraft.betterchunkloader.config;
 
-import ninja.leaping.configurate.objectmapping.Setting;
+import com.google.common.reflect.TypeToken;
+import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
 @ConfigSerializable
 public class MessagesConfig {
 
-    @Setting("Prefix")
-    public String prefix = "&8[&6Chunkloader&8] &r";
+    public final BetterChunkLoader plugin;
 
-    @Setting("ChunkLoader")
-    public ChunkLoader chunkLoader = new ChunkLoader();
+    private static ConfigurationLoader<CommentedConfigurationNode> loader;
+    private static CommentedConfigurationNode config;
 
-    @Setting("Commands")
-    public Commands commands = new Commands();
+    private Path fileLoc;
 
-    @ConfigSerializable
-    public static class ChunkLoader {
-
-        @Setting("CreationHelp")
-        public String creationHelp = "&aIron and Diamond blocks can be converted into chunk loaders. Right click it with a blaze rod.";
-
-        @Setting("NoPermissionCreate")
-        public String noPermissionCreate = "&cYou don't have the permission to create a chunkloader of that type.";
-
-        @Setting("NoPermissionEdit")
-        public String noPermissionEdit = "&cYou don't have the permission to edit this chunkloader.";
-
-        @Setting("Info")
-        public Info info = new Info();
-
-        @ConfigSerializable
-        public static class Info {
-
-            @Setting("Title")
-            public String title = "&8[&6Chunkloader&8]&r";
-
-            @Setting("Padding")
-            public String padding = "&8=";
-
-            @Setting("Items")
-            public List<String> items = Arrays.asList(
-                    "&eInfo",
-                    "    &aOwner: &e{ownerName}",
-                    "    &aLocation: &e{location}",
-                    "    &aType: &e{type}",
-                    "    &aChunks: &e{chunks}"
-            );
+    public MessagesConfig(BetterChunkLoader main) throws IOException {
+        plugin = main;
+        fileLoc = plugin.Configdir.resolve("messages.conf");
+        loader = HoconConfigurationLoader.builder().setPath(fileLoc).build();
+        config = loader.load();
+        try {
+            configCheck();
+        } catch (ObjectMappingException e) {
+            e.printStackTrace();
         }
-
-        @Setting("InvalidOption")
-        public String invalidOption = "&cThat is an invalid option.";
-
-        @Setting("NotEnough")
-        public String notEnough = "&cNot enough chunks Needed: &e{needed}&c Available: &e{available}&c.";
-
-        @Setting("CreateSuccess")
-        public String createSuccess = "&aCreated chunkloader, your balance was modified.";
-
-        @Setting("CreateFailure")
-        public String createFailure = "&aFailed to create chunkloader, your balance was not modified.";
-
-        @Setting("RemoveSuccess")
-        public String removeSuccess = "&cRemoved chunkloader, updated the balance of the owner.";
-
-        @Setting("RemoveFailure")
-        public String removeFailure = "&cFailed to remove chunkloader, didn't update the balance of the owner.";
-
-        @Setting("UpdateSuccess")
-        public String updateSuccess = "&eUpdated chunkloader, your balance was modified.";
-
-        @Setting("UpdateFailure")
-        public String updateFailure = "&eFailed to update chunkloader, your balance was not modified.";
-
-        @Setting("OwnerNotify")
-        public String ownerNotify = "&cYour chunk loader at &e{location}&c has been removed by &e{player}&c, your balance has been modified.";
     }
 
-    @ConfigSerializable
-    public static class Commands {
+    public String prefix = "&8[&6Chunkloader&8] &r";
 
-        @Setting("NoPlayerExists")
-        public String noPlayerExists = "&cThat player does not exist.";
+    //ChunkLoader
+    public String creationHelp = "&aIron and Diamond blocks can be converted into chunk loaders. Right click it with a blaze rod.";
+    public String noPermissionCreate = "&cYou don't have the permission to create a chunkloader of that type.";
+    public String noPermissionEdit = "&cYou don't have the permission to edit this chunkloader.";
+    public String invalidOption = "&cThat is an invalid option.";
+    public String notEnough = "&cNot enough chunks Needed: &e{needed}&c Available: &e{available}&c.";
+    public String createSuccess = "&aCreated chunkloader, your balance was modified.";
+    public String createFailure = "&aFailed to create chunkloader, your balance was not modified.";
+    public String removeSuccess = "&cRemoved chunkloader, updated the balance of the owner.";
+    public String removeFailure = "&cFailed to remove chunkloader, didn't update the balance of the owner.";
+    public String updateSuccess = "&eUpdated chunkloader, your balance was modified.";
+    public String updateFailure = "&eFailed to update chunkloader, your balance was not modified.";
+    public String ownerNotify = "&cYour chunk loader at &e{location}&c has been removed by &e{player}&c, your balance has been modified.";
 
-        @Setting("Usage")
-        public Usage usage = new Usage();
+    public String infoTitle = "&8[&6Chunkloader&8]&r";
+    public String infoPadding = "&8=";
+    public List<String> infoItems = Arrays.asList(
+            "&eInfo",
+            "    &aOwner: &e{ownerName}",
+            "    &aLocation: &e{location}",
+            "    &aType: &e{type}",
+            "    &aChunks: &e{chunks}"
+    );
 
-        @ConfigSerializable
-        public static class Usage {
+    //Commands
+    public String noPlayerExists = "&cThat player does not exist.";
+    public String usageTitle = "&8[&6Chunkloader&8]&r";
+    public String usagePadding = "&8=";
+    public List<String> usageItems = Arrays.asList(
+            "&eUsage:",
+            "    &e/bcl balance ?<player>",
+            "    &e/bcl chunks <add|set|remove> <player> <online|alwayson>",
+            "    &e/bcl delete <type> ?<player>",
+            "    &e/bcl info",
+            "    &e/bcl list <type> ?<player>",
+            "    &e/bcl purge",
+            "    &e/bcl reload ?<core|messages|datastore>"
+    );
+    public String balanceNoPermission = "&cYou don't have permission to see the balance of other players.";
+    public String balanceTitleSelf = "&8[&6Chunkloader Balance&8]&r";
+    public String balanceTitleOther = "&8[&6{player}'s Chunkloader Balance&8]&r";
+    public String balancePadding = "&8=";
+    public List<String> balanceItems = Arrays.asList(
+            "&7Total Used &8/ &7Total Available",
+            "&3Online: &6{onlineused} &8/ &6 {online}",
+            "&3Always On: &6{alwaysonused} &8/ &6 {alwayson}"
+    );
+    public String balanceFailure = "&cUnable to get the balance.";
+    public String chunksUsage = "&eUsage: /bcl chunks <add|set|remove> <player> <online|alwayson> <amount>";
+    public String chunksAddSuccess = "&aAdded &e{chunks}&a {type} chunks to &e{target}'s&a balance!";
+    public String chunksAddFailure = "&cUnable to add &e{chunks}&c {type} chunks to &e{target}'s&c balance as it would become negative or would exceed the limit of &e{limit}&c.";
+    public String chunksRemoveSuccess = "&aRemoved &e{chunks}&a {type} chunks from &e{target}'s&a balance!";
+    public String chunksRemoveFailure = "&cUnable to remove &e{chunks}&c {type} chunks from &e{target}'s&c balance as it would become negative or would exceed the limit of &e{limit}&c.";
+    public String chunksSetSuccess = "&aSet &e{target}'s&a {type} chunk balance to &e{chunks}&a.";
+    public String chunksSetFailure = "&cUnable to set &e{target}'s&c {type} chunk balance to &e{chunks}&c as it would become negative or would exceed the limit of &e{limit}&c.";
+    public String chunksDeleteUsage = "&eUsage: /bcl delete <type> ?<player>";
+    public String chunksDeleteInvalidType = "&cInvalid chunkloader type: {type}, options are: (online|alwayson).";
+    public String chunksDeleteConsoleError = "&cOnly players can remove their own chunkloaders, please specify a player name.";
+    public String chunksDeleteOwnSuccess = "&aRemoved all your &e{type}&a chunkloaders.";
+    public String chunksDeleteOwnFailure = "&cYou don't have any &e{type}&c chunkloaders.";
+    public String chunksDeleteOthersSuccess = "&aRemoved &e{type}&a chunk loaders from &e{player}&a.";
+    public String chunksDeleteOthersFailure = "&cPlayer &e{player}&c has no &e{type}&c chunkloaders.";
+    public String chunksDeleteOthersNoPermission = "&cYou do not have permission to delete the chunkloaders of other players.";
+    public String chunksInfoTitle = "&8[&6Chunkloader&8]&r";
+    public String chunksInfoPadding = "&8=";
+    public List<String> chunksInfoItems = Arrays.asList(
+            "&eChunkloading Statistics:",
+            "    &e{onlineLoaders}&a &aOnline loaders loading &e{onlineChunks}&a chunks.",
+            "    &e{alwaysOnLoaders} &aAlways On loaders loading &e{alwaysOnChunks}&a chunks.",
+            "    &e{playerCount}&a player(s) loading chunks!"
+    );
+    public String chunksInfoFailure = "&cNo statistics available!";
+    public String chunksListTitleAll = "&8[&6All Chunkloaders&8]&r";
+    public String chunksListTitleAlwaysOn = "&8[&6Always On Chunkloaders&8]&r";
+    public String chunksListTitleOnlineOnly = "&8[&6Online Only Chunkloaders&8]&r";
+    public String chunksListTitleSelf = "&8[&6Your Chunkloaders&8]&r";
 
-            @Setting("Title")
-            public String title = "&8[&6Chunkloader&8]&r";
+    public String chunksListPadding = "&8=";
+    public String chunksListTeleport = "&eTeleported to chunkloader at &6{location}";
 
-            @Setting("Padding")
-            public String padding = "&8=";
+        public String chunksListEditAction = "&8[&6Edit&8]";
 
-            @Setting("Items")
-            public List<String> items = Arrays.asList(
-                    "&eUsage:",
-                    "    &e/bcl balance ?<player>",
-                    "    &e/bcl chunks <add|set|remove> <player> <online|alwayson>",
-                    "    &e/bcl delete <type> ?<player>",
-                    "    &e/bcl info",
-                    "    &e/bcl list <type> ?<player>",
-                    "    &e/bcl purge",
-                    "    &e/bcl reload ?<core|messages|datastore>"
-            );
+            public String chunksListHoverEditAction = "&eClick here to edit this chunkloader";
+            public String chunksListHoverAll =
+                    "&3Owner: &6{owner}\n" +
+                            "&3Type: &6{type}\n" +
+                            "&3Loc: &6{location}\n"+
+                            "&3Radius: &6{radius}\n"+
+                            "&3Chunks: &6{chunks}";
+            public String chunksListHoverAlwayson =
+                    "&3Owner: &6{owner}\n" +
+                            "&3Type: &6{type}\n" +
+                            "&3Loc: &6{location}\n"+
+                            "&3Radius: &6{radius}\n"+
+                            "&3Chunks: &6{chunks}";
+            public String chunksListHoverOnline =
+                    "&3Owner: &6{owner}\n" +
+                            "&3Type: &6{type}\n" +
+                            "&3Loc: &6{location}\n"+
+                            "&3Radius: &6{radius}\n"+
+                            "&3Chunks: &6{chunks}";
+            public String chunksListHoverSelf =
+                    "&3Owner: &6{owner}\n" +
+                            "&3Type: &6{type}\n" +
+                            "&3Loc: &6{location}\n"+
+                            "&3Radius: &6{radius}\n"+
+                            "&3Chunks: &6{chunks}";
+
+        public List<String> chunksListAll = Arrays.asList(
+                "&3Owner: &6{ownerabr}",
+                " &3Type: &6{type}",
+                " &3Loaded: &6{loaded}"
+        );
+        public List<String> chunksListAlwayson = Arrays.asList(
+                "&3Owner: &6{ownerabr}",
+                " &3Type: &6{type}",
+                " &3Loaded: &6{loaded}"
+        );
+        public List<String> chunksListOnline = Arrays.asList(
+                "&3Owner: &6{ownerabr}",
+                " &3Type: &6{type}",
+                " &3Loaded: &6{loaded}"
+        );
+        public List<String> chunksListSelf = Arrays.asList(
+                "&3Owner: &6{ownerabr}",
+                " &3Type: &6{type}",
+                " &3Loaded: &6{loaded}"
+        );
+
+        public String chunksListNoChunkLoadersFound = "&eThere is currently no chunkloaders.";
+            public String chunksListNoPermission = "&cYou don't have permission to see others chunkloaders.";
+            public String chunksListNoPlayer = "&cPlayer was specified but no player was found.";
+
+
+
+    public String chunksPurgeUsage = "&aAll invalid chunk loaders have been removed!";
+    public String chunksPurgeSuccess = "&aAll invalid chunk loaders have been removed!";
+    public String chunksPurgeFailure = "&cUnable to remove invalid chunk loaders, none present.";
+    public String chunksReloadUsage = "&eUsage: /bcl reload <core|messages|datastore>";
+    public String chunksReloadSuccess = "&aReload success for: &e{type}&a.";
+    public String chunksReloadFailure = "&cReload failed for: &e{type}&c, check console for more information.";
+
+
+
+    private void configCheck() throws IOException, ObjectMappingException {
+        if (!fileLoc.toFile().exists()) {
+            fileLoc.toFile().createNewFile();
         }
 
-        @Setting("Balance")
-        public CBalance balance = new CBalance();
+        prefix = check(config.getNode("Prefix"), prefix).getString();
 
-        @Setting("Chunks")
-        public CChunks chunks = new CChunks();
+        //ChunkLoader
+        creationHelp = check(config.getNode("ChunkLoader", "CreationHelp"), creationHelp).getString();
+        noPermissionCreate = check(config.getNode("ChunkLoader", "NoPermissionCreate"), noPermissionCreate).getString();
+        noPermissionEdit = check(config.getNode("ChunkLoader", "NoPermissionEdit"), noPermissionEdit).getString();
+        invalidOption = check(config.getNode("ChunkLoader", "InvalidOption"), invalidOption).getString();
+        notEnough = check(config.getNode("ChunkLoader", "NotEnough"), notEnough).getString();
+        createSuccess = check(config.getNode("ChunkLoader", "CreateSuccess"), createSuccess).getString();
+        createFailure = check(config.getNode("ChunkLoader", "CreateFailure"), createFailure).getString();
+        removeSuccess = check(config.getNode("ChunkLoader", "RemoveSuccess"), removeSuccess).getString();
+        removeFailure = check(config.getNode("ChunkLoader", "RemoveFailure"), removeFailure).getString();
+        updateSuccess = check(config.getNode("ChunkLoader", "UpdateSuccess"), updateSuccess).getString();
+        updateFailure = check(config.getNode("ChunkLoader", "UpdateFailure"), updateFailure).getString();
+        ownerNotify = check(config.getNode("ChunkLoader", "OwnerNotify"), ownerNotify).getString();
 
-        @Setting("Delete")
-        public CDelete delete = new CDelete();
+        infoTitle = check(config.getNode("ChunkLoader", "Info", "Title"), infoTitle).getString();
+        infoPadding = check(config.getNode("ChunkLoader", "Info", "Padding"), infoPadding).getString();
+        infoItems = check(config.getNode("ChunkLoader", "Info", "Items"), infoItems).getList(TypeToken.of(String.class));
 
-        @Setting("Info")
-        public CInfo info = new CInfo();
+        //Commands
+        noPlayerExists = check(config.getNode("Commands", "NoPlayerExists"), noPlayerExists).getString();
 
-        @Setting("List")
-        public CList list = new CList();
+        usageTitle = check(config.getNode("Commands", "Usage", "Title"), usageTitle).getString();
+        usagePadding = check(config.getNode("Commands", "Usage", "Padding"), usagePadding).getString();
+        usageItems = check(config.getNode("Commands", "Usage", "Items"), usageItems).getList(TypeToken.of(String.class));
 
-        @Setting("Reload")
-        public CReload reload = new CReload();
+        balanceNoPermission = check(config.getNode("Commands", "Balance", "NoPermission"), balanceNoPermission).getString();
+        balanceTitleSelf = check(config.getNode("Commands", "Balance", "Success", "TitleSelf"), balanceTitleSelf).getString();
+        balanceTitleOther = check(config.getNode("Commands", "Balance", "Success", "TitleOther"), balanceTitleOther).getString();
+        balancePadding = check(config.getNode("Commands", "Balance", "Success", "Padding"), balancePadding).getString();
+        balanceItems = check(config.getNode("Commands", "Balance", "Success", "Items"), balanceItems).getList(TypeToken.of(String.class));
+        balanceFailure = check(config.getNode("Commands", "Balance", "Failure"), balanceFailure).getString();
 
-        @Setting("Purge")
-        public CPurge purge = new CPurge();
+        chunksUsage = check(config.getNode("Commands", "Chunks", "Usage"), chunksUsage).getString();
+        chunksAddSuccess = check(config.getNode("Commands", "Chunks", "Add", "Success"), chunksAddSuccess).getString();
+        chunksAddFailure = check(config.getNode("Commands", "Chunks", "Add", "Failure"), chunksAddFailure).getString();
+        chunksRemoveSuccess = check(config.getNode("Commands", "Chunks", "Remove", "Success"), chunksRemoveSuccess).getString();
+        chunksRemoveFailure = check(config.getNode("Commands", "Chunks", "Remove", "Failure"), chunksRemoveFailure).getString();
 
-        @ConfigSerializable
-        public static class CBalance {
+        chunksSetSuccess = check(config.getNode("Commands", "Chunks", "Set", "Success"), chunksSetSuccess).getString();
+        chunksSetFailure = check(config.getNode("Commands", "Chunks", "Set", "Failure"), chunksSetFailure).getString();
 
-            @Setting("NoPermission")
-            public String noPermission = "&cYou don't have permission to see the balance of other players.";
+        chunksDeleteUsage = check(config.getNode("Commands", "Delete", "Usage"), chunksDeleteUsage).getString();
+        chunksDeleteInvalidType = check(config.getNode("Commands", "Delete", "InvalidType"), chunksDeleteInvalidType).getString();
+        chunksDeleteConsoleError = check(config.getNode("Commands", "Delete", "ConsoleError"), chunksDeleteConsoleError).getString();
+        chunksDeleteOwnSuccess = check(config.getNode("Commands", "Delete", "Own", "Success"), chunksDeleteOwnSuccess).getString();
+        chunksDeleteOwnFailure = check(config.getNode("Commands", "Delete", "Own", "Failure"), chunksDeleteOwnFailure).getString();
+        chunksDeleteOthersSuccess = check(config.getNode("Commands", "Delete", "Others", "Success"), chunksDeleteOthersSuccess).getString();
+        chunksDeleteOthersFailure = check(config.getNode("Commands", "Delete", "Others", "Failure"), chunksDeleteOthersFailure).getString();
+        chunksDeleteOthersNoPermission = check(config.getNode("Commands", "Delete", "Others", "NoPermission"), chunksDeleteOthersNoPermission).getString();
 
-            @Setting("Success")
-            public Success success = new Success();
+        chunksInfoTitle = check(config.getNode("Commands", "Info", "Success", "Title"), chunksInfoTitle).getString();
+        chunksInfoPadding = check(config.getNode("Commands", "Info", "Success", "Padding"), chunksInfoPadding).getString();
+        chunksInfoItems = check(config.getNode("Commands", "Info", "Success", "Items"), chunksInfoItems).getList(TypeToken.of(String.class));
+        chunksInfoFailure = check(config.getNode("Commands", "Info", "Failure"), chunksInfoFailure).getString();
 
-            @ConfigSerializable
-            public static class Success {
+        chunksPurgeUsage = check(config.getNode("Commands", "Purge", "Usage"), chunksPurgeUsage).getString();
+        chunksPurgeSuccess = check(config.getNode("Commands", "Purge", "Success"), chunksPurgeSuccess).getString();
+        chunksPurgeFailure = check(config.getNode("Commands", "Purge", "Failure"), chunksPurgeFailure).getString();
 
-                @Setting("TitleSelf")
-                public String titleSelf = "&8[&6Chunkloader Balance&8]&r";
+        chunksReloadUsage = check(config.getNode("Commands", "Reload", "Usage"), chunksReloadUsage).getString();
+        chunksReloadSuccess = check(config.getNode("Commands", "Reload", "Success"), chunksReloadSuccess).getString();
+        chunksReloadFailure = check(config.getNode("Commands", "Reload", "Failure"), chunksReloadFailure).getString();
 
-                @Setting("TitleOther")
-                public String titleOther = "&8[&6{player}'s Chunkloader Balance&8]&r";
 
-                @Setting("Padding")
-                public String padding = "&8=";
+        chunksListNoChunkLoadersFound = check(config.getNode("Commands", "List", "NoChunkloadersFound"), chunksListNoChunkLoadersFound).getString();
+        chunksListNoPermission = check(config.getNode("Commands", "List", "NoPermission"), chunksListNoPermission).getString();
+        chunksListNoPlayer = check(config.getNode("Commands", "List", "NoPlayer"), chunksListNoPlayer).getString();
 
-                @Setting("Items")
-                public List<String> items = Arrays.asList(
-                        "&7Total Used &8/ &7Total Available",
-                        "&3Online: &6{onlineused} &8/ &6 {online}",
-                        "&3Always On: &6{alwaysonused} &8/ &6 {alwayson}"
-                );
-            }
-            @Setting("Failure")
-            public String failure = "&cUnable to get the balance.";
+        chunksListPadding = check(config.getNode("Commands", "Success", "Padding"), chunksListPadding).getString();
+        chunksListTeleport = check(config.getNode("Commands", "Success", "Teleport"), chunksListTeleport).getString();
+
+        chunksListTitleAll = check(config.getNode("Commands", "Success", "Title", "TitleAll"), chunksListTitleAll).getString();
+        chunksListTitleAlwaysOn = check(config.getNode("Commands", "Success", "Title", "TitleAlwaysOn"), chunksListTitleAlwaysOn).getString();
+        chunksListTitleOnlineOnly = check(config.getNode("Commands", "Success", "Title", "TitleOnlineOnly"), chunksListTitleOnlineOnly).getString();
+        chunksListTitleSelf = check(config.getNode("Commands", "Success", "Title", "TitleSelf"), chunksListTitleSelf).getString();
+
+        chunksListAll = check(config.getNode("Commands", "Success", "Format", "All"), chunksListAll).getList(TypeToken.of(String.class));
+        chunksListAlwayson = check(config.getNode("Commands", "Success", "Format", "Alwayson"), chunksListAlwayson).getList(TypeToken.of(String.class));
+        chunksListEditAction = check(config.getNode("Commands", "Success", "Format", "EditAction"), chunksListEditAction).getString();
+        chunksListOnline = check(config.getNode("Commands", "Success", "Format", "Online"), chunksListOnline).getList(TypeToken.of(String.class));
+        chunksListSelf = check(config.getNode("Commands", "Success", "Format", "Self"), chunksListSelf).getList(TypeToken.of(String.class));
+
+        chunksListHoverAll = check(config.getNode("Commands", "Success", "Format", "Hover", "All"), chunksListHoverAll).getString();
+        chunksListHoverAlwayson = check(config.getNode("Commands", "Success", "Format", "Hover", "AlwaysOn"), chunksListHoverAlwayson).getString();
+        chunksListHoverEditAction = check(config.getNode("Commands", "Success", "Format", "Hover", "EditAction"), chunksListHoverEditAction).getString();
+        chunksListHoverOnline = check(config.getNode("Commands", "Success", "Format", "Hover", "Online"), chunksListHoverOnline).getString();
+        chunksListHoverSelf = check(config.getNode("Commands", "Success", "Format", "Hover", "Self"), chunksListHoverSelf).getString();
+
+        loader.save(config);
+    }
+
+    private CommentedConfigurationNode check(CommentedConfigurationNode node, Object defaultValue, String comment) {
+        if (node.isVirtual()) {
+            node.setValue(defaultValue).setComment(comment);
         }
+        return node;
+    }
 
-        @ConfigSerializable
-        public static class CChunks {
-
-            @Setting("Usage")
-            public String usage = "&eUsage: /bcl chunks <add|set|remove> <player> <online|alwayson> <amount>";
-
-            @Setting("Add")
-            public Add add = new Add();
-
-            @Setting("Remove")
-            public Remove remove = new Remove();
-
-            @Setting("Set")
-            public Set set = new Set();
-
-            @ConfigSerializable
-            public static class Add {
-
-                @Setting("Success")
-                public String success = "&aAdded &e{chunks}&a {type} chunks to &e{target}'s&a balance!";
-
-                @Setting("Failure")
-                public String failure = "&cUnable to add &e{chunks}&c {type} chunks to &e{target}'s&c balance as it would become negative or would exceed the limit of &e{limit}&c.";
-
-            }
-
-            @ConfigSerializable
-            public static class Remove {
-
-                @Setting("Success")
-                public String success = "&aRemoved &e{chunks}&a {type} chunks from &e{target}'s&a balance!";
-
-                @Setting("Failure")
-                public String failure = "&cUnable to remove &e{chunks}&c {type} chunks from &e{target}'s&c balance as it would become negative or would exceed the limit of &e{limit}&c.";
-
-            }
-
-            @ConfigSerializable
-            public static class Set {
-
-                @Setting("Success")
-                public String success = "&aSet &e{target}'s&a {type} chunk balance to &e{chunks}&a.";
-
-                @Setting("Failure")
-                public String failure = "&cUnable to set &e{target}'s&c {type} chunk balance to &e{chunks}&c as it would become negative or would exceed the limit of &e{limit}&c.";
-
-            }
+    private CommentedConfigurationNode check(CommentedConfigurationNode node, Object defaultValue) {
+        if (node.isVirtual()) {
+            node.setValue(defaultValue);
         }
-
-        @ConfigSerializable
-        public static class CDelete {
-
-            @Setting("Usage")
-            public String usage = "&eUsage: /bcl delete <type> ?<player>";
-
-            @Setting("InvalidType")
-            public String invalidType = "&cInvalid chunkloader type: {type}, options are: (online|alwayson).";
-
-            @Setting("ConsoleError")
-            public String consoleError = "&cOnly players can remove their own chunkloaders, please specify a player name.";
-
-            @Setting("Own")
-            public Own own = new Own();
-
-            @Setting("Others")
-            public Others others = new Others();
-
-            @ConfigSerializable
-            public static class Own {
-
-                @Setting("Success")
-                public String success = "&aRemoved all your &e{type}&a chunkloaders.";
-
-                @Setting("Failure")
-                public String failure = "&cYou don't have any &e{type}&c chunkloaders.";
-            }
-
-            @ConfigSerializable
-            public static class Others {
-
-                @Setting("Success")
-                public String success = "&aRemoved &e{type}&a chunk loaders from &e{player}&a.";
-
-                @Setting("Failure")
-                public String failure = "&cPlayer &e{player}&c has no &e{type}&c chunkloaders.";
-
-                @Setting("NoPermission")
-                public String noPermission = "&cYou do not have permission to delete the chunkloaders of other players.";
-            }
-        }
-
-        @ConfigSerializable
-        public static class CInfo {
-
-            @Setting("Success")
-            public Success success = new Success();
-
-            @ConfigSerializable
-            public static class Success {
-
-                @Setting("Title")
-                public String title = "&8[&6Chunkloader&8]&r";
-
-                @Setting("Padding")
-                public String padding = "&8=";
-
-                @Setting("Items")
-                public List<String> items = Arrays.asList(
-                        "&eChunkloading Statistics:",
-                        "    &e{onlineLoaders}&a &aOnline loaders loading &e{onlineChunks}&a chunks.",
-                        "    &e{alwaysOnLoaders} &aAlways On loaders loading &e{alwaysOnChunks}&a chunks.",
-                        "    &e{playerCount}&a player(s) loading chunks!"
-                );
-            }
-            @Setting("Failure")
-            public String failure = "&cNo statistics available!";
-
-        }
-
-        @ConfigSerializable
-        public static class CList {
-
-            @Setting("Success")
-            public Success success = new Success();
-
-            @ConfigSerializable
-            public static class Success {
-
-                @Setting("Title")
-                public Title title = new Title();
-
-                @ConfigSerializable
-                public static class Title {
-
-                    @Setting("TitleAll")
-                    public String all = "&8[&6All Chunkloaders&8]&r";
-
-                    @Setting("TitleAlwaysOn")
-                    public String alwaysOn = "&8[&6Always On Chunkloaders&8]&r";
-
-                    @Setting("TitleOnlineOnly")
-                    public String onlineOnly = "&8[&6Online Only Chunkloaders&8]&r";
-
-                    @Setting("TitleSelf")
-                    public String self = "&8[&6Your Chunkloaders&8]&r";
-                }
-
-                @Setting("Padding")
-                public String padding = "&8=";
-
-                @Setting("Teleport")
-                public String teleport = "&eTeleported to chunkloader at &6{location}";
-
-                @Setting("Format")
-                public Format format = new Format();
-
-                @ConfigSerializable
-                public static class Format {
-
-                    @Setting("EditAction")
-                    public String editAction = "&8[&6Edit&8]";
-
-                    @Setting("Hover")
-                    public Hover hover = new Hover();
-
-                    @ConfigSerializable
-                    public static class Hover {
-
-                        @Setting("EditAction")
-                        public String editAction = "&eClick here to edit this chunkloader";
-
-                        @Setting("All")
-                        public String all =
-                                "&3Owner: &6{owner}\n" +
-                                        "&3Type: &6{type}\n" +
-                                        "&3Loc: &6{location}\n"+
-                                        "&3Radius: &6{radius}\n"+
-                                        "&3Chunks: &6{chunks}";
-
-                        @Setting("AlwaysOn")
-                        public String alwayson =
-                                "&3Owner: &6{owner}\n" +
-                                        "&3Type: &6{type}\n" +
-                                        "&3Loc: &6{location}\n"+
-                                        "&3Radius: &6{radius}\n"+
-                                        "&3Chunks: &6{chunks}";
-
-                        @Setting("Online")
-                        public String online =
-                                "&3Owner: &6{owner}\n" +
-                                        "&3Type: &6{type}\n" +
-                                        "&3Loc: &6{location}\n"+
-                                        "&3Radius: &6{radius}\n"+
-                                        "&3Chunks: &6{chunks}";
-
-                        @Setting("Self")
-                        public String self =
-                                "&3Owner: &6{owner}\n" +
-                                        "&3Type: &6{type}\n" +
-                                        "&3Loc: &6{location}\n"+
-                                        "&3Radius: &6{radius}\n"+
-                                        "&3Chunks: &6{chunks}";
-                    }
-
-                    @Setting("All")
-                    public List<String> all = Arrays.asList(
-                            "&3Owner: &6{ownerabr}",
-                            " &3Type: &6{type}",
-                            " &3Loaded: &6{loaded}"
-                    );
-
-                    @Setting("Alwayson")
-                    public List<String> alwayson = Arrays.asList(
-                            "&3Owner: &6{ownerabr}",
-                            " &3Type: &6{type}",
-                            " &3Loaded: &6{loaded}"
-                    );
-
-                    @Setting("Online")
-                    public List<String> online = Arrays.asList(
-                            "&3Owner: &6{ownerabr}",
-                            " &3Type: &6{type}",
-                            " &3Loaded: &6{loaded}"
-                    );
-
-                    @Setting("Self")
-                    public List<String> self = Arrays.asList(
-                            "&3Owner: &6{ownerabr}",
-                            " &3Type: &6{type}",
-                            " &3Loaded: &6{loaded}"
-                    );
-                }
-            }
-
-            @Setting("NoChunkloadersFound")
-            public String noChunkLoadersFound = "&eThere is currently no chunkloaders.";
-
-            @Setting("NoPermission")
-            public String noPermission = "&cYou don't have permission to see others chunkloaders.";
-
-            @Setting("NoPlayer")
-            public String noPlayer = "&cPlayer was specified but no player was found.";
-
-        }
-
-        @ConfigSerializable
-        public static class CPurge {
-
-            @Setting("Success")
-            public String success = "&aAll invalid chunk loaders have been removed!";
-
-            @Setting("Failure")
-            public String failure = "&cUnable to remove invalid chunk loaders, none present.";
-
-        }
-
-        @ConfigSerializable
-        public static class CReload {
-
-            @Setting("Usage")
-            public String usage = "&eUsage: /bcl reload <core|messages|datastore>";
-
-            @Setting("Success")
-            public String success = "&aReload success for: &e{type}&a.";
-
-            @Setting("Failure")
-            public String failure = "&cReload failed for: &e{type}&c, check console for more information.";
-
-        }
+        return node;
     }
 }

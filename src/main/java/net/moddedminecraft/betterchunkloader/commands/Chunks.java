@@ -33,12 +33,12 @@ public class Chunks implements CommandExecutor {
 
         Optional<UUID> playerUUID = Utilities.getPlayerUUID(playerName.getName());
         if (!playerUUID.isPresent()) {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.noPlayerExists));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
             return CommandResult.empty();
         }
         Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(playerUUID.get());
         if (!playerData.isPresent()) {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.noPlayerExists));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
             return CommandResult.empty();
         }
 
@@ -47,8 +47,8 @@ public class Chunks implements CommandExecutor {
             put("targetUUID", playerData.get().getUnqiueId().toString());
             put("online", String.valueOf(playerData.get().getOnlineChunks()));
             put("alwayson", String.valueOf(playerData.get().getAlwaysOnChunks()));
-            put("maxOnline", String.valueOf(plugin.getConfig().getCore().chunkLoader.online.maxOnline));
-            put("maxAlwaysOn", String.valueOf(plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn));
+            put("maxOnline", String.valueOf(plugin.getConfig().getCore().maxOnline));
+            put("maxAlwaysOn", String.valueOf(plugin.getConfig().getCore().maxAlwaysOn));
             put("chunks", String.valueOf(changeValue));
         }};
 
@@ -57,9 +57,9 @@ public class Chunks implements CommandExecutor {
                 switch (loaderTypeElement) {
                     case "alwayson": {
                         args.put("type", "Always On");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn));
-                        if (playerData.get().getAlwaysOnChunks() + changeValue < 0 || playerData.get().getAlwaysOnChunks() + changeValue > plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn) {
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.add.failure, args));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxAlwaysOn));
+                        if (playerData.get().getAlwaysOnChunks() + changeValue < 0 || playerData.get().getAlwaysOnChunks() + changeValue > plugin.getConfig().getCore().maxAlwaysOn) {
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddFailure, args));
                             return CommandResult.empty();
                         }
 
@@ -71,14 +71,14 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.add.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddSuccess, args));
                         return CommandResult.success();
                     }
                     case "online": {
                         args.put("type", "Online Only");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.online.maxOnline));
-                        if (playerData.get().getOnlineChunks() + changeValue < 0 || playerData.get().getOnlineChunks() + changeValue > plugin.getConfig().getCore().chunkLoader.online.maxOnline) {
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.add.failure, args));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxOnline));
+                        if (playerData.get().getOnlineChunks() + changeValue < 0 || playerData.get().getOnlineChunks() + changeValue > plugin.getConfig().getCore().maxOnline) {
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddFailure, args));
                             return CommandResult.empty();
                         }
                         playerData.get().addOnlineChunks(changeValue);
@@ -89,11 +89,11 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.add.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddSuccess, args));
                         return CommandResult.success();
                     }
                     default: {
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.usage, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksUsage, args));
                         return CommandResult.empty();
                     }
                 }
@@ -102,9 +102,9 @@ public class Chunks implements CommandExecutor {
                 switch (loaderTypeElement) {
                     case "alwayson": {
                         args.put("type", "Always On");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn));
-                        if (playerData.get().getAlwaysOnChunks() - changeValue < 0 || playerData.get().getAlwaysOnChunks() - changeValue > plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn) {
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.remove.failure, args));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxAlwaysOn));
+                        if (playerData.get().getAlwaysOnChunks() - changeValue < 0 || playerData.get().getAlwaysOnChunks() - changeValue > plugin.getConfig().getCore().maxAlwaysOn) {
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveFailure, args));
                             return CommandResult.empty();
                         }
 
@@ -116,14 +116,14 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.remove.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveSuccess, args));
                         return CommandResult.success();
                     }
                     case "online": {
                         args.put("type", "Online Only");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.online.maxOnline));
-                        if (playerData.get().getOnlineChunks() - changeValue < 0 || playerData.get().getOnlineChunks() - changeValue > plugin.getConfig().getCore().chunkLoader.online.maxOnline) {
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.remove.failure, args));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxOnline));
+                        if (playerData.get().getOnlineChunks() - changeValue < 0 || playerData.get().getOnlineChunks() - changeValue > plugin.getConfig().getCore().maxOnline) {
+                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveFailure, args));
                             return CommandResult.empty();
                         }
                         playerData.get().removeOnlineChunks(changeValue);
@@ -134,24 +134,24 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.remove.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveSuccess, args));
                         return CommandResult.success();
                     }
                     default: {
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.usage, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksUsage, args));
                         return CommandResult.empty();
                     }
                 }
             }
             case "set": {
                 if (changeValue < 0) {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.set.failure, args));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksSetFailure, args));
                     return CommandResult.empty();
                 }
                 switch (loaderTypeElement) {
                     case "alwayson": {
                         args.put("type", "Always On");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.alwaysOn.maxAlwaysOn));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxAlwaysOn));
                         playerData.get().setAlwaysOnChunks(changeValue);
 
                         try {
@@ -160,12 +160,12 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.set.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksSetSuccess, args));
                         return CommandResult.success();
                     }
                     case "online": {
                         args.put("type", "Online Only");
-                        args.put("limit", String.valueOf(plugin.getConfig().getCore().chunkLoader.online.maxOnline));
+                        args.put("limit", String.valueOf(plugin.getConfig().getCore().maxOnline));
                         playerData.get().setOnlineChunks(changeValue);
 
                         try {
@@ -174,17 +174,17 @@ public class Chunks implements CommandExecutor {
                             e.printStackTrace();
                         }
 
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.set.success, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksSetSuccess, args));
                         return CommandResult.success();
                     }
                     default: {
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.usage, args));
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksUsage, args));
                         return CommandResult.empty();
                     }
                 }
             }
             default: {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.chunks.usage, args));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksUsage, args));
                 return CommandResult.empty();
             }
         }

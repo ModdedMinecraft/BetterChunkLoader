@@ -26,9 +26,9 @@ public class Menu {
 
     private final BetterChunkLoader plugin;
 
-    private static final ItemType REMOVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.removeItemType).orElse(ItemTypes.REDSTONE_TORCH);
-    private static final ItemType ACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.activeItemType).orElse(ItemTypes.POTION);
-    private static final ItemType INACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().menu.inactiveItemType).orElse(ItemTypes.GLASS_BOTTLE);
+    private static final ItemType REMOVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().removeItemType).orElse(ItemTypes.REDSTONE_TORCH);
+    private static final ItemType ACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().activeItemType).orElse(ItemTypes.POTION);
+    private static final ItemType INACTIVE_TYPE = Sponge.getRegistry().getType(ItemType.class, BetterChunkLoader.getInstance().getConfig().getCore().inactiveItemType).orElse(ItemTypes.GLASS_BOTTLE);
 
     public Menu(BetterChunkLoader plugin) {
         this.plugin = plugin;
@@ -59,7 +59,7 @@ public class Menu {
             int pos = 2;
             int maxRadius = 7;
 
-            if (!player.hasPermission(Permissions.UNLLIMITED_CHUNKS)) maxRadius = plugin.getConfig().getCore().menu.maxSize;
+            if (!player.hasPermission(Permissions.UNLLIMITED_CHUNKS)) maxRadius = plugin.getConfig().getCore().maxSize;
 
             if (maxRadius < 0) maxRadius = 0;
             if (maxRadius > 7) maxRadius = 7;

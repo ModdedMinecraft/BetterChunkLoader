@@ -45,11 +45,11 @@ public class ListAlwayson implements CommandExecutor {
                 if (playerUUID.isPresent()) {
                     chunkLoaders = getChunkLoadersByType(playerUUID.get(), true);
                 } else {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.list.noPlayer));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
                     return CommandResult.empty();
                 }
             } else {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.list.noPermission));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksListNoPermission));
             }
         } else {
             if (sender instanceof Player) {
@@ -65,13 +65,13 @@ public class ListAlwayson implements CommandExecutor {
             readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
         }
         if (readableCLs.isEmpty()) {
-            readableCLs.add(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.noChunkLoadersFound));
+            readableCLs.add(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListNoChunkLoadersFound));
         }
 
         plugin.getPaginationService().builder()
                 .contents(readableCLs)
-                .title(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.title.alwaysOn))
-                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.padding))
+                .title(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListTitleAlwaysOn))
+                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListPadding))
                 .sendTo(sender);
 
         return CommandResult.success();
@@ -103,20 +103,20 @@ public class ListAlwayson implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (chunkLoader.canEdit(player)) {
-                send.append(Text.builder().append(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.editAction))
+                send.append(Text.builder().append(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListEditAction))
                         .onClick(TextActions.executeCallback(editLoader(chunkLoader)))
-                        .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.editAction))).build());
+                        .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListHoverEditAction))).build());
                 send.append(Utilities.parseMessage(" &f- "));
             }
         }
 
         if (sender.hasPermission(Permissions.TELEPORT)) {
-            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.all, args))
-                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.all, args)))
+            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().chunksListAlwayson, args))
+                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListHoverAlwayson, args)))
                     .onClick(TextActions.executeCallback(teleportTo(chunkLoader.getWorld(), chunkLoader.getLocation())));
         } else {
-            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.list.success.format.all, args))
-                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.format.hover.all, args)));
+            send.append(Utilities.parseMessageList(plugin.getConfig().getMessages().chunksListAlwayson, args))
+                    .onHover(TextActions.showText(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListHoverAlwayson, args)));
         }
 
         return send.build();
@@ -144,7 +144,7 @@ public class ListAlwayson implements CommandExecutor {
                 HashMap<String, String> args = new HashMap<>();
                 args.put("location", Utilities.getReadableLocation(worldUUID, vector3i));
 
-                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().commands.list.success.teleport, args));
+                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListTeleport, args));
             }
         };
     }

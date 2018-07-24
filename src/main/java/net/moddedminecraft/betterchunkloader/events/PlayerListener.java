@@ -122,7 +122,7 @@ public class PlayerListener {
         }
 
         Optional<ChunkLoader> chunkLoader = plugin.dataManager.getChunkLoaderAt(clickedBlock.getLocation().get());
-        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getId().equalsIgnoreCase(plugin.getConfig().getCore().chunkLoader.wandType)) {
+        if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getId().equalsIgnoreCase(plugin.getConfig().getCore().wandType)) {
             if (!chunkLoader.isPresent()) {
                 chunkLoader = Optional.of(new ChunkLoader(
                         UUID.randomUUID(),
@@ -136,7 +136,7 @@ public class PlayerListener {
                 ));
             }
             if (!chunkLoader.get().canCreate(player)) {
-                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunkLoader.noPermissionCreate));
+                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPermissionCreate));
                 return;
             }
             new Menu(plugin).showMenu(player, chunkLoader.get());
@@ -156,15 +156,15 @@ public class PlayerListener {
                     args.put("type", (chunkLoader.get().isAlwaysOn() ? "Always On" : "Online"));
                     if (chunkLoader.get().canEdit(player)) {
                         plugin.getPaginationService().builder()
-                                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().chunkLoader.info.items, args))
-                                .title(Utilities.parseMessage(plugin.getConfig().getMessages().chunkLoader.info.title))
-                                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().chunkLoader.info.padding))
+                                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().infoItems, args))
+                                .title(Utilities.parseMessage(plugin.getConfig().getMessages().infoTitle))
+                                .padding(Utilities.parseMessage(plugin.getConfig().getMessages().infoPadding))
                                 .sendTo(player);
                     } else {
-                        player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunkLoader.noPermissionEdit, args));
+                        player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPermissionEdit, args));
                     }
                 } else {
-                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunkLoader.creationHelp, args));
+                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().creationHelp, args));
                 }
             }
         }

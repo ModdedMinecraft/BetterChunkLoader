@@ -53,7 +53,7 @@ public class Reload implements CommandExecutor {
                     break;
                 }
                 default: {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.reload.usage));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksReloadUsage));
                     return CommandResult.success();
                 }
             }
@@ -74,10 +74,10 @@ public class Reload implements CommandExecutor {
         HashMap<String, String> args = new HashMap<>();
         args.put("type", currentType);
         if (success) {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.reload.success, args));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksReloadSuccess, args));
             return CommandResult.success();
         } else {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.reload.failure, args));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksReloadFailure, args));
             return CommandResult.empty();
         }
     }

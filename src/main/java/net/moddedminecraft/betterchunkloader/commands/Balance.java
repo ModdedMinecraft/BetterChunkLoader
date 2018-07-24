@@ -32,11 +32,11 @@ public class Balance implements CommandExecutor {
                 if (chunksInfo(sender, playerName.get(),true)) {
                     return CommandResult.success();
                 } else {
-                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.noPlayerExists));
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
                     return CommandResult.empty();
                 }
             } else {
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.balance.noPermission));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().balanceNoPermission));
                 return CommandResult.empty();
             }
         } else {
@@ -46,15 +46,15 @@ public class Balance implements CommandExecutor {
                 return CommandResult.success();
             }
         }
-        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.balance.failure));
+        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().balanceFailure));
         return CommandResult.empty();
     }
 
     private boolean chunksInfo(CommandSource sender, User player, boolean other) {
         Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(player.getUniqueId());
         if (playerData.isPresent()) {
-            int defaultOnline = plugin.getConfig().getCore().chunkLoader.online.defaultOnline;
-            int defaultAlwayson = plugin.getConfig().getCore().chunkLoader.alwaysOn.defaultAlwaysOn;
+            int defaultOnline = plugin.getConfig().getCore().defaultOnline;
+            int defaultAlwayson = plugin.getConfig().getCore().defaultAlwaysOn;
             int onlineUsed = plugin.getUsedChunks(playerData.get().getUnqiueId(), false);
             int alwaysonUsed = plugin.getUsedChunks(playerData.get().getUnqiueId(), true);
 
@@ -65,13 +65,13 @@ public class Balance implements CommandExecutor {
             args.put("alwayson", String.valueOf(playerData.get().getAlwaysOnChunks() + defaultAlwayson));
             args.put("alwaysonused", String.valueOf(alwaysonUsed));
 
-            String title = plugin.getConfig().getMessages().commands.balance.success.titleSelf;
-            if (other) title = plugin.getConfig().getMessages().commands.balance.success.titleOther;
+            String title = plugin.getConfig().getMessages().balanceTitleSelf;
+            if (other) title = plugin.getConfig().getMessages().balanceTitleOther;
 
             plugin.getPaginationService().builder()
-                    .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().commands.balance.success.items, args))
+                    .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().balanceItems, args))
                     .title(Utilities.parseMessage(title, args))
-                    .padding(Utilities.parseMessage(plugin.getConfig().getMessages().commands.balance.success.padding))
+                    .padding(Utilities.parseMessage(plugin.getConfig().getMessages().balancePadding))
                     .sendTo(sender);
             return true;
         }

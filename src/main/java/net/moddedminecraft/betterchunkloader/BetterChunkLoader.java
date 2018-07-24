@@ -14,7 +14,6 @@ import net.moddedminecraft.betterchunkloader.events.WorldListener;
 import net.moddedminecraft.betterchunkloader.menu.MenuListener;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import org.slf4j.Logger;
@@ -71,9 +70,6 @@ public class BetterChunkLoader {
     @ConfigDir(sharedRoot = false)
     public Path Configdir;
 
-    @Inject
-    public GuiceObjectMapperFactory factory;
-
     public Map<UUID, PlayerData> playersData;
     public Map<UUID, ChunkLoader> chunkLoaderData;
 
@@ -115,7 +111,7 @@ public class BetterChunkLoader {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        Sponge.getScheduler().createTaskBuilder().delay(config.getCore().chunkLoader.loadDelay, TimeUnit.SECONDS).execute(() -> {
+        Sponge.getScheduler().createTaskBuilder().delay(config.getCore().loadDelay, TimeUnit.SECONDS).execute(() -> {
             int count = 0;
             count = getChunkLoaderData().stream().filter((chunkLoader) -> (chunkLoader.isLoadable())).map((chunkLoader) -> {
                 getChunkManager().loadChunkLoader(chunkLoader);
@@ -202,8 +198,8 @@ public class BetterChunkLoader {
         } else {
             final List<ChunkLoader> chunks = new ArrayList<ChunkLoader>(getChunkLoaderData());
             final PlayerData playerData = dataManager.getPlayerDataFor(uuid).get();
-            int alwaysonavailable = getConfig().getCore().chunkLoader.alwaysOn.defaultAlwaysOn + playerData.getAlwaysOnChunks();
-            int onlineavailable = getConfig().getCore().chunkLoader.online.defaultOnline + playerData.getOnlineChunks();
+            int alwaysonavailable = getConfig().getCore().defaultAlwaysOn + playerData.getAlwaysOnChunks();
+            int onlineavailable = getConfig().getCore().defaultOnline + playerData.getOnlineChunks();
 
             for (ChunkLoader chunk : chunks) {
                 if (chunk.getOwner().equals(playerData.getUnqiueId())) {

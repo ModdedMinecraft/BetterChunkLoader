@@ -36,15 +36,15 @@ public class Purge implements CommandExecutor {
         if (count > 0) {
             try {
                 plugin.saveData();
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.purge.success));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksPurgeSuccess));
                 return CommandResult.success();
             } catch (IOException | ObjectMappingException e) {
                 e.printStackTrace();
-                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.purge.failure));
+                sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksPurgeFailure));
                 return CommandResult.empty();
             }
         } else {
-            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().commands.purge.failure));
+            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksPurgeFailure));
             return CommandResult.empty();
         }
     }
