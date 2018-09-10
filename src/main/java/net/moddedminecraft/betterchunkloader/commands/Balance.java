@@ -4,7 +4,6 @@ import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Permissions;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.PlayerData;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -24,7 +23,7 @@ public class Balance implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
+    public CommandResult execute(CommandSource sender, CommandContext commandContext) {
         Optional<User> playerName = commandContext.<User>getOne("player");
 
         if (playerName.isPresent()) {
@@ -51,12 +50,12 @@ public class Balance implements CommandExecutor {
     }
 
     private boolean chunksInfo(CommandSource sender, User player, boolean other) {
-        Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(player.getUniqueId());
+        Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(player.getUniqueId());
         if (playerData.isPresent()) {
             int defaultOnline = plugin.getConfig().getCore().defaultOnline;
             int defaultAlwayson = plugin.getConfig().getCore().defaultAlwaysOn;
-            int onlineUsed = plugin.getUsedChunks(playerData.get().getUnqiueId(), false);
-            int alwaysonUsed = plugin.getUsedChunks(playerData.get().getUnqiueId(), true);
+            int onlineUsed = plugin.getDataStore().getUsedChunks(playerData.get().getUnqiueId(), false);
+            int alwaysonUsed = plugin.getDataStore().getUsedChunks(playerData.get().getUnqiueId(), true);
 
             HashMap<String, String> args = new HashMap<>();
             args.put("player", playerData.get().getName());

@@ -39,7 +39,7 @@ public class ListAll implements CommandExecutor {
         List<ChunkLoader> chunkLoaders = new ArrayList<>();
 
         for (World world : Sponge.getServer().getWorlds()) {
-            chunkLoaders.addAll(plugin.dataManager.getChunkLoaders(world));
+            chunkLoaders.addAll(plugin.getDataStore().getChunkLoaders(world));
         }
 
         List<Text> readableCLs = new ArrayList<>();
@@ -69,7 +69,7 @@ public class ListAll implements CommandExecutor {
     }
 
     public Text getReadableChunkLoader(ChunkLoader chunkLoader, CommandSource sender) {
-        Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(chunkLoader.getOwner());
+        Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner());
 
         String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
         String loaded = chunkLoader.isLoadable() ? "&aTrue" : "&cFalse";
@@ -87,6 +87,7 @@ public class ListAll implements CommandExecutor {
         args.put("radius", chunkLoader.getRadius().toString());
         args.put("chunks", chunkLoader.getChunks().toString());
         args.put("loaded", loaded);
+        args.put("server", chunkLoader.getServer());
 
         Text.Builder send = Text.builder();
 

@@ -35,7 +35,7 @@ public class Menu {
     }
 
     public void showMenu(Player player, ChunkLoader chunkLoader) {
-        plugin.dataManager.getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
+        plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
             String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() + " " : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
             if (title.length() > 32) {
                 title = title.substring(0, 32);

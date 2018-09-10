@@ -43,7 +43,7 @@ public class ListAlwayson implements CommandExecutor {
             if (sender.hasPermission(Permissions.COMMAND_LIST + ".others")) {
                 Optional<UUID> playerUUID = Utilities.getPlayerUUID(playerName.get().getName());
                 if (playerUUID.isPresent()) {
-                    chunkLoaders = getChunkLoadersByType(playerUUID.get(), true);
+                    chunkLoaders = plugin.getDataStore().getChunkLoadersByType(playerUUID.get(), true);
                 } else {
                     sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
                     return CommandResult.empty();
@@ -54,9 +54,9 @@ public class ListAlwayson implements CommandExecutor {
         } else {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                chunkLoaders = getChunkLoadersByType(player.getUniqueId(), true);
+                chunkLoaders = plugin.getDataStore().getChunkLoadersByType(player.getUniqueId(), true);
             } else {
-                chunkLoaders = plugin.dataManager.getChunkLoadersByType(true);
+                chunkLoaders = plugin.getDataStore().getChunkLoadersByType(true);
             }
         }
 
@@ -78,7 +78,7 @@ public class ListAlwayson implements CommandExecutor {
     }
 
     public Text getReadableChunkLoader(ChunkLoader chunkLoader, CommandSource sender) {
-        Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(chunkLoader.getOwner());
+        Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner());
 
         String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
         String loaded = chunkLoader.isLoadable() ? "&aTrue" : "&cFalse";
@@ -97,6 +97,7 @@ public class ListAlwayson implements CommandExecutor {
         args.put("radius", chunkLoader.getRadius().toString());
         args.put("chunks", chunkLoader.getChunks().toString());
         args.put("loaded", loaded);
+        args.put("server", chunkLoader.getServer());
 
         Text.Builder send = Text.builder();
 
@@ -147,13 +148,5 @@ public class ListAlwayson implements CommandExecutor {
                 player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().chunksListTeleport, args));
             }
         };
-    }
-
-    public List<ChunkLoader> getChunkLoadersByType(UUID owner, Boolean type) {
-        List<ChunkLoader> chunkLoaders = new ArrayList<>();
-        plugin.dataManager.getChunkLoadersByOwner(owner).stream().filter((cl) -> (cl.isAlwaysOn().equals(type))).forEachOrdered((cl) -> {
-            chunkLoaders.add(cl);
-        });
-        return chunkLoaders;
     }
 }

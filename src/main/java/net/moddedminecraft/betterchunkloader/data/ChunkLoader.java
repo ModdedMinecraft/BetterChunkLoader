@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public class ChunkLoader extends ChunkLoaderUtil {
 
-    public ChunkLoader(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn) {
-        super(uuid, world, owner, location, chunk, radius, creation, isAlwaysOn);
+    public ChunkLoader(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server) {
+        super(uuid, world, owner, location, chunk, radius, creation, isAlwaysOn, server);
     }
 
     public static class ChunkLoaderSerializer extends VectorSerializer implements TypeSerializer<ChunkLoader> {
@@ -42,7 +42,8 @@ public class ChunkLoader extends ChunkLoaderUtil {
                         chunkVector.get(),
                         node.getNode("radius").getInt(),
                         node.getNode("creation").getLong(),
-                        node.getNode("isalwayson").getBoolean());
+                        node.getNode("isalwayson").getBoolean(),
+                        node.getNode("server").getString());
             } else {
                 return new ChunkLoader(
                         node.getNode("uuid").getValue(TypeToken.of(UUID.class)),
@@ -52,7 +53,8 @@ public class ChunkLoader extends ChunkLoaderUtil {
                         new Vector3i(0,0,0),
                         node.getNode("radius").getInt(),
                         node.getNode("creation").getLong(),
-                        node.getNode("isalwayson").getBoolean());
+                        node.getNode("isalwayson").getBoolean(),
+                        node.getNode("server").getString());
             }
         }
 
@@ -66,6 +68,7 @@ public class ChunkLoader extends ChunkLoaderUtil {
             node.getNode("radius").setValue(chunkLoader.radius);
             node.getNode("creation").setValue(chunkLoader.creation);
             node.getNode("isalwayson").setValue(chunkLoader.isAlwaysOn);
+            node.getNode("server").setValue(chunkLoader.server);
         }
     }
 }

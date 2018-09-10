@@ -5,7 +5,6 @@ import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import net.moddedminecraft.betterchunkloader.data.PlayerData;
 import net.moddedminecraft.betterchunkloader.menu.Menu;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.type.HandTypes;
@@ -15,8 +14,10 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerListener {
@@ -34,50 +35,30 @@ public class PlayerListener {
     @Listener
     public void onPlayerLogin(ClientConnectionEvent.Join event) {
         Player player = event.getTargetEntity();
-
-        if (!plugin.playersData.containsKey(player.getUniqueId())) {
-            plugin.addPlayerData(new PlayerData(
+        Optional<PlayerData> pData = plugin.getDataStore().getPlayerDataFor(player.getUniqueId());
+        if (!pData.isPresent()) {
+            plugin.getDataStore().addPlayerData(new PlayerData(
                     player.getName(),
                     player.getUniqueId(),
                     System.currentTimeMillis(),
                     0,
                     0));
-            try {
-                plugin.saveData();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } else {
-            Sponge.getScheduler().createTaskBuilder().execute(new Runnable() {
-                public void run() {
-                    final List<PlayerData> playerData = new ArrayList<PlayerData>(plugin.getPlayerData());
-                    for (PlayerData pData : playerData) {
-                        if (pData.getUnqiueId().equals(player.getUniqueId()) && !pData.getName().equals(player.getName())) {
-                            pData.setName(player.getName());
-                            try {
-                                plugin.saveData();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+            Sponge.getScheduler().createTaskBuilder().execute(() -> {
+                Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(player.getUniqueId());
+                if (playerData.isPresent() && !playerData.get().getName().equals(player.getName())) {
+                    playerData.get().setName(player.getName());
                 }
             }).delay(15, TimeUnit.SECONDS).name("betterchunkloader-s-checkUserNameOnLogin").submit(this.plugin);
         }
 
-        plugin.dataManager.getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
+        plugin.getDataStore().getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
             playerData.setLastOnline(System.currentTimeMillis());
-
-            try {
-                plugin.saveData();
-            } catch (IOException | ObjectMappingException e) {
-                e.printStackTrace();
-            }
         });
 
-        final List<ChunkLoader> clList = plugin.dataManager.getChunkLoadersByOwner(player.getUniqueId());
+        final List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByOwner(player.getUniqueId());
         for (ChunkLoader chunkLoader : clList) {
-            if (chunkLoader.isLoadable()) {
+            if (chunkLoader.isLoadable() && chunkLoader.getServer().equalsIgnoreCase(plugin.getConfig().getCore().server)) {
                 plugin.getChunkManager().loadChunkLoader(chunkLoader);
             }
         }
@@ -87,17 +68,11 @@ public class PlayerListener {
 
     @Listener
     public void onPlayerQuit(ClientConnectionEvent.Disconnect event, @Root Player player) {
-        plugin.dataManager.getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
+        plugin.getDataStore().getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
             playerData.setLastOnline(System.currentTimeMillis());
-
-            try {
-                plugin.saveData();
-            } catch (IOException | ObjectMappingException e) {
-                e.printStackTrace();
-            }
         });
 
-        final List<ChunkLoader> clList = plugin.dataManager.getChunkLoadersByOwner(player.getUniqueId());
+        final List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByOwner(player.getUniqueId());
         for (ChunkLoader chunkLoader : clList) {
             if (!chunkLoader.isAlwaysOn() && chunkLoader.isLoadable()) {
                 plugin.getChunkManager().unloadChunkLoader(chunkLoader);
@@ -121,7 +96,7 @@ public class PlayerListener {
             return;
         }
 
-        Optional<ChunkLoader> chunkLoader = plugin.dataManager.getChunkLoaderAt(clickedBlock.getLocation().get());
+        Optional<ChunkLoader> chunkLoader = plugin.getDataStore().getChunkLoaderAt(clickedBlock.getLocation().get());
         if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && player.getItemInHand(HandTypes.MAIN_HAND).get().getType().getId().equalsIgnoreCase(plugin.getConfig().getCore().wandType)) {
             if (!chunkLoader.isPresent()) {
                 chunkLoader = Optional.of(new ChunkLoader(
@@ -132,7 +107,8 @@ public class PlayerListener {
                         clickedBlock.getLocation().get().getChunkPosition(),
                         -1,
                         System.currentTimeMillis(),
-                        clickedBlock.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE)
+                        clickedBlock.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE),
+                        plugin.getConfig().getCore().server
                 ));
             }
             if (!chunkLoader.get().canCreate(player)) {
@@ -146,7 +122,7 @@ public class PlayerListener {
                 args.put("playerName", player.getName());
                 args.put("playerUUID", player.getUniqueId().toString());
                 if (chunkLoader.isPresent()) {
-                    Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(chunkLoader.get().getOwner());
+                    Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.get().getOwner());
                     if (playerData.isPresent()) {
                         args.put("ownerName", playerData.get().getName());
                         args.put("ownerUUID", playerData.get().getUnqiueId().toString());

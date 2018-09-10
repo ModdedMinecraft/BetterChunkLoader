@@ -4,8 +4,6 @@ import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Permissions;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -13,8 +11,10 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Delete implements CommandExecutor {
 
@@ -25,7 +25,7 @@ public class Delete implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
+    public CommandResult execute(CommandSource sender, CommandContext commandContext) {
         Optional<User> playerName = commandContext.<User>getOne("player");
         Optional<String> loaderType = commandContext.<String>getOne("type");
         Optional<String> flagOp = commandContext.<String>getOne("flag");
@@ -65,40 +65,36 @@ public class Delete implements CommandExecutor {
                 return CommandResult.empty();
             }
             if (loaderType.get().equalsIgnoreCase("online") || loaderType.get().equalsIgnoreCase("alwayson")) {
-                List<ChunkLoader> clList = getChunkLoadersByType(playerUUID.get(), loaderType.get().equalsIgnoreCase("alwayson"));
+                List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByType(playerUUID.get(), loaderType.get().equalsIgnoreCase("alwayson"));
 
                 int success = 0;
                 for (ChunkLoader chunkLoader : clList) {
                     if (onlyExpired && chunkLoader.isAlwaysOn()) {
                         if (chunkLoader.isExpired()) {
                             plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                            plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
-                            success++;
+                            if (plugin.getDataStore().removeChunkLoader(chunkLoader.getUniqueId())) {
+                                success++;
+                            }
                         }
                     }
                     if (onlyActive) {
                         if (chunkLoader.isLoadable()) {
                             plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                            plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
-                            success++;
+                            if (plugin.getDataStore().removeChunkLoader(chunkLoader.getUniqueId())) {
+                                success++;
+                            }
                         }
                     }
                     if (!onlyActive && !onlyExpired) {
                         plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                        plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
-                        success++;
+                        if (plugin.getDataStore().removeChunkLoader(chunkLoader.getUniqueId())) {
+                            success++;
+                        }
                     }
                 }
                 if (success > 0) {
-                    try {
-                        plugin.saveData();
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersSuccess, args));
-                        return CommandResult.success();
-                    } catch (IOException | ObjectMappingException e) {
-                        e.printStackTrace();
-                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersFailure, args));
-                        return CommandResult.success();
-                    }
+                    sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersSuccess, args));
+                    return CommandResult.success();
                 } else {
                     sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOthersFailure, args));
                     return CommandResult.success();
@@ -111,24 +107,18 @@ public class Delete implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (loaderType.get().equalsIgnoreCase("online") || loaderType.get().equalsIgnoreCase("alwayson")) {
-                    List<ChunkLoader> clList = getChunkLoadersByType(player.getUniqueId(), loaderType.get().equalsIgnoreCase("alwayson"));
+                    List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByType(player.getUniqueId(), loaderType.get().equalsIgnoreCase("alwayson"));
 
                     int success = 0;
                     for (ChunkLoader chunkLoader : clList) {
                         plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                        plugin.chunkLoaderData.remove(chunkLoader.getUniqueId());
-                        success++;
+                        if (plugin.getDataStore().removeChunkLoader(chunkLoader.getUniqueId())) {
+                            success++;
+                        }
                     }
                     if (success > 0) {
-                        try {
-                            plugin.saveData();
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnSuccess, args));
-                            return CommandResult.success();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                            sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnFailure, args));
-                            return CommandResult.empty();
-                        }
+                        sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnSuccess, args));
+                        return CommandResult.success();
                     } else {
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksDeleteOwnFailure, args));
                         return CommandResult.empty();
@@ -142,13 +132,5 @@ public class Delete implements CommandExecutor {
                 return CommandResult.empty();
             }
         }
-    }
-
-    public List<ChunkLoader> getChunkLoadersByType(UUID owner, Boolean type) {
-        List<ChunkLoader> chunkLoaders = new ArrayList<>();
-        plugin.dataManager.getChunkLoadersByOwner(owner).stream().filter((cl) -> (cl.isAlwaysOn().equals(type))).forEachOrdered((cl) -> {
-            chunkLoaders.add(cl);
-        });
-        return chunkLoaders;
     }
 }

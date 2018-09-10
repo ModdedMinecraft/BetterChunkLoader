@@ -3,15 +3,12 @@ package net.moddedminecraft.betterchunkloader.commands;
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.PlayerData;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.User;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +22,7 @@ public class Chunks implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
+    public CommandResult execute(CommandSource sender, CommandContext commandContext) {
         String chunksChangeOperatorElement = commandContext.<String>getOne("change").get();
         String loaderTypeElement = commandContext.<String>getOne("type").get();
         User playerName = commandContext.<User>getOne("player").get();
@@ -36,7 +33,7 @@ public class Chunks implements CommandExecutor {
             sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
             return CommandResult.empty();
         }
-        Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(playerUUID.get());
+        Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(playerUUID.get());
         if (!playerData.isPresent()) {
             sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPlayerExists));
             return CommandResult.empty();
@@ -64,12 +61,7 @@ public class Chunks implements CommandExecutor {
                         }
 
                         playerData.get().addAlwaysOnChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddSuccess, args));
                         return CommandResult.success();
@@ -82,12 +74,7 @@ public class Chunks implements CommandExecutor {
                             return CommandResult.empty();
                         }
                         playerData.get().addOnlineChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksAddSuccess, args));
                         return CommandResult.success();
@@ -109,12 +96,7 @@ public class Chunks implements CommandExecutor {
                         }
 
                         playerData.get().removeAlwaysOnChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveSuccess, args));
                         return CommandResult.success();
@@ -127,12 +109,7 @@ public class Chunks implements CommandExecutor {
                             return CommandResult.empty();
                         }
                         playerData.get().removeOnlineChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksRemoveSuccess, args));
                         return CommandResult.success();
@@ -153,12 +130,7 @@ public class Chunks implements CommandExecutor {
                         args.put("type", "Always On");
                         args.put("limit", String.valueOf(plugin.getConfig().getCore().maxAlwaysOn));
                         playerData.get().setAlwaysOnChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksSetSuccess, args));
                         return CommandResult.success();
@@ -167,12 +139,7 @@ public class Chunks implements CommandExecutor {
                         args.put("type", "Online Only");
                         args.put("limit", String.valueOf(plugin.getConfig().getCore().maxOnline));
                         playerData.get().setOnlineChunks(changeValue);
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
-                            e.printStackTrace();
-                        }
+                        plugin.getDataStore().updatePlayerData(playerData.get());
 
                         sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksSetSuccess, args));
                         return CommandResult.success();

@@ -3,7 +3,6 @@ package net.moddedminecraft.betterchunkloader.menu;
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
@@ -15,7 +14,6 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +57,7 @@ public class MenuListener {
                 return;
             }
 
-            plugin.dataManager.getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
+            plugin.getDataStore().getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
 
                 Optional<SlotPos> slotPos = getSlotPos(event.getCursorTransaction());
                 Optional<Integer> radius = getRadius(event.getCursorTransaction());
@@ -70,23 +68,18 @@ public class MenuListener {
                     return;
                 }
 
-                int available = plugin.getAvailableChunks(playerData.getUnqiueId(), chunkLoader.isAlwaysOn());
+                int available = plugin.getDataStore().getAvailableChunks(playerData.getUnqiueId(), chunkLoader.isAlwaysOn());
 
                 switch (slotPos.get().getX()) {
                     case 0: {
                         plugin.getChunkManager().unloadChunkLoader(chunkLoader);
-                        plugin.chunkLoaderData.remove(chunkLoader.getUniqueId()); //TODO Move?
-
-                        try {
-                            plugin.saveData();
-                        } catch (IOException | ObjectMappingException e) {
+                        if (!plugin.getDataStore().removeChunkLoader(chunkLoader.getUniqueId())) {
                             player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeFailure));
-                            e.printStackTrace();
-                            break;
+                            return;
+                        } else {
+                            player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeSuccess));
+                            return;
                         }
-
-                        player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeSuccess));
-                        return;
                     }
                     default: {
 
@@ -98,6 +91,10 @@ public class MenuListener {
                         args.put("chunks", String.valueOf(chunkLoader.getChunks()));
                         args.put("available", String.valueOf(available));
 
+                        if (plugin.getConfig().getCore().server.isEmpty()) {
+                            player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().serverNameError));
+                            break;
+                        }
 
                         if (chunks.get() > (available + chunkLoader.getChunks()) - 1) {
                             args.put("needed", String.valueOf(chunks.get()));
@@ -109,33 +106,29 @@ public class MenuListener {
 
                             chunkLoader.setRadius(radius.get());
                             chunkLoader.setCreation(System.currentTimeMillis());
-                            plugin.chunkLoaderData.put(chunkLoader.getUniqueId(), chunkLoader);
-
-                            try {
-                                plugin.saveData();
-                            } catch (IOException | ObjectMappingException e) {
-
-                                if (chunkLoader.getRadius() < 0) {
-                                    plugin.getLogger().info(player.getName() + " failed to create new chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " with radius " + chunkLoader.getRadius());
-                                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().createFailure));
-                                } else {
+                            if (plugin.getDataStore().getChunkLoaderExist(chunkLoader.getUniqueId())) {
+                                if (!plugin.getDataStore().updateChunkLoaderData(chunkLoader)) {
                                     plugin.getLogger().info(player.getName() + " failed to edit " + playerData.getName() + "'s chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " radius from " + oldRadius + " to " + radius.get());
                                     player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().updateSuccess, args));
+                                    break;
+                                } else {
+                                    plugin.getChunkManager().loadChunkLoader(chunkLoader);
+                                    plugin.getLogger().info(player.getName() + " edited " + playerData.getName() + "'s chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " radius from " + oldRadius + " to " + radius.get());
+                                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().updateSuccess, args));
+                                    break;
                                 }
-
-                                e.printStackTrace();
-                                break;
-                            }
-
-                            plugin.getChunkManager().loadChunkLoader(chunkLoader);
-                            if (oldRadius < 0) {
-                                plugin.getLogger().info(player.getName() + " made a new chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " with radius " + chunkLoader.getRadius());
-                                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().createSuccess));
                             } else {
-                                plugin.getLogger().info(player.getName() + " edited " + playerData.getName() + "'s chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " radius from " + oldRadius + " to " + radius.get());
-                                player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().updateSuccess, args));
+                                if (!plugin.getDataStore().addChunkLoaderData(chunkLoader)) {
+                                    plugin.getLogger().info(player.getName() + " failed to create new chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " with radius " + chunkLoader.getRadius());
+                                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().createFailure));
+                                    break;
+                                } else {
+                                    plugin.getChunkManager().loadChunkLoader(chunkLoader);
+                                    plugin.getLogger().info(player.getName() + " made a new chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " with radius " + chunkLoader.getRadius());
+                                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().createSuccess));
+                                    break;
+                                }
                             }
-                            break;
                         }
                     }
                 }

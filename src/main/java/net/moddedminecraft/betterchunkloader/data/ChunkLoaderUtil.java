@@ -26,10 +26,12 @@ public class ChunkLoaderUtil {
     protected Long creation;
     protected Boolean isAlwaysOn;
 
+    protected String server;
+
     public static final BlockType ONLINE_TYPE = Sponge.getRegistry().getType(BlockType.class, BetterChunkLoader.getInstance().getConfig().getCore().onlineBlockType).orElse(BlockTypes.IRON_BLOCK);
     public static final BlockType ALWAYSON_TYPE = Sponge.getRegistry().getType(BlockType.class, BetterChunkLoader.getInstance().getConfig().getCore().alwaysOnBlockType).orElse(BlockTypes.DIAMOND_BLOCK);
 
-    public ChunkLoaderUtil(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn) {
+    public ChunkLoaderUtil(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server) {
         this.uuid = uuid;
         this.world = world;
         this.owner = owner;
@@ -38,6 +40,7 @@ public class ChunkLoaderUtil {
         this.radius = radius;
         this.creation = creation;
         this.isAlwaysOn = isAlwaysOn;
+        this.server = server;
     }
 
     public UUID getUniqueId() {
@@ -76,12 +79,24 @@ public class ChunkLoaderUtil {
         this.creation = creation;
     }
 
+    public Long getCreation() {
+        return creation;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
     public Boolean isAlwaysOn() {
         return isAlwaysOn;
     }
 
     public Boolean isExpired() {
-        Optional<PlayerData> playerData = BetterChunkLoader.getInstance().dataManager.getPlayerDataFor(owner);
+        Optional<PlayerData> playerData = BetterChunkLoader.getInstance().getDataStore().getPlayerDataFor(owner);
         if (playerData.isPresent()) {
             PlayerData pData = playerData.get();
             if (isAlwaysOn()) {

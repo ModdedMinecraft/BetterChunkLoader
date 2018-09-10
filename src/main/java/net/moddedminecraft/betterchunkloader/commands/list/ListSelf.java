@@ -38,7 +38,7 @@ public class ListSelf implements CommandExecutor {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            chunkLoaders = plugin.dataManager.getChunkLoadersByOwner(player.getUniqueId());
+            chunkLoaders = plugin.getDataStore().getChunkLoadersByOwner(player.getUniqueId());
         }
 
         List<Text> readableCLs = new ArrayList<>();
@@ -59,7 +59,7 @@ public class ListSelf implements CommandExecutor {
     }
 
     public Text getReadableChunkLoader(ChunkLoader chunkLoader, CommandSource sender) {
-        Optional<PlayerData> playerData = plugin.dataManager.getPlayerDataFor(chunkLoader.getOwner());
+        Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner());
 
         String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
         String loaded = chunkLoader.isLoadable() ? "&aTrue" : "&cFalse";
@@ -78,6 +78,7 @@ public class ListSelf implements CommandExecutor {
         args.put("radius", chunkLoader.getRadius().toString());
         args.put("chunks", chunkLoader.getChunks().toString());
         args.put("loaded", loaded);
+        args.put("server", chunkLoader.getServer());
 
         Text.Builder send = Text.builder();
 

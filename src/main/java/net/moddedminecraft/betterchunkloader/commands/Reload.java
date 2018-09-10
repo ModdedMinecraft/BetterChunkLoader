@@ -2,14 +2,11 @@ package net.moddedminecraft.betterchunkloader.commands;
 
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -22,7 +19,7 @@ public class Reload implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
+    public CommandResult execute(CommandSource sender, CommandContext commandContext) {
         Optional<String> typeElement = commandContext.<String>getOne("type");
         String currentType;
         Boolean success;
@@ -40,16 +37,10 @@ public class Reload implements CommandExecutor {
                 }
                 case "data": {
                     currentType = "data";
-                    try {
-                        plugin.unloadChunks();
-                        plugin.loadData();
-                        plugin.loadChunks();
-                        success = true;
-                    } catch (IOException | ObjectMappingException e) {
-                        success = false;
-                        e.printStackTrace();
-                        break;
-                    }
+                    plugin.unloadChunks();
+                    plugin.getDataStore().load();
+                    plugin.loadChunks();
+                    success = true;
                     break;
                 }
                 default: {
@@ -59,17 +50,12 @@ public class Reload implements CommandExecutor {
             }
         } else {
             currentType = "all";
-            try {
-                plugin.unloadChunks();
-                plugin.loadData();
-                plugin.loadChunks();
-                plugin.getConfig().loadMessages();
-                plugin.getConfig().loadCore();
-                success = true;
-            } catch (IOException | ObjectMappingException e) {
-                success = false;
-                e.printStackTrace();
-            }
+            plugin.unloadChunks();
+            plugin.getDataStore().load();
+            plugin.loadChunks();
+            plugin.getConfig().loadMessages();
+            plugin.getConfig().loadCore();
+            success = true;
         }
         HashMap<String, String> args = new HashMap<>();
         args.put("type", currentType);

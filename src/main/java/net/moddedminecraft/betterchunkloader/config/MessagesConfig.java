@@ -37,6 +37,8 @@ public class MessagesConfig {
 
     public String prefix = "&8[&6Chunkloader&8] &r";
 
+    public String serverNameError = "&cPlease set the server name in the core configuration before setting up a chunkloader.";
+
     //ChunkLoader
     public String creationHelp = "&aIron and Diamond blocks can be converted into chunk loaders. Right click it with a blaze rod.";
     public String noPermissionCreate = "&cYou don't have the permission to create a chunkloader of that type.";
@@ -58,7 +60,8 @@ public class MessagesConfig {
             "    &aOwner: &e{ownerName}",
             "    &aLocation: &e{location}",
             "    &aType: &e{type}",
-            "    &aChunks: &e{chunks}"
+            "    &aChunks: &e{chunks}",
+            "    &aServer: &e{server}"
     );
 
     //Commands
@@ -125,45 +128,53 @@ public class MessagesConfig {
                             "&3Type: &6{type}\n" +
                             "&3Loc: &6{location}\n"+
                             "&3Radius: &6{radius}\n"+
-                            "&3Chunks: &6{chunks}";
+                            "&3Chunks: &6{chunks}"+
+                            "&3Server: &6{server}";
             public String chunksListHoverAlwayson =
                     "&3Owner: &6{owner}\n" +
                             "&3Type: &6{type}\n" +
                             "&3Loc: &6{location}\n"+
                             "&3Radius: &6{radius}\n"+
-                            "&3Chunks: &6{chunks}";
+                            "&3Chunks: &6{chunks}"+
+                            "&3Server: &6{server}";
             public String chunksListHoverOnline =
                     "&3Owner: &6{owner}\n" +
                             "&3Type: &6{type}\n" +
                             "&3Loc: &6{location}\n"+
                             "&3Radius: &6{radius}\n"+
-                            "&3Chunks: &6{chunks}";
+                            "&3Chunks: &6{chunks}"+
+                            "&3Server: &6{server}";
             public String chunksListHoverSelf =
                     "&3Owner: &6{owner}\n" +
                             "&3Type: &6{type}\n" +
                             "&3Loc: &6{location}\n"+
                             "&3Radius: &6{radius}\n"+
-                            "&3Chunks: &6{chunks}";
+                            "&3Chunks: &6{chunks}"+
+                            "&3Server: &6{server}";
 
         public List<String> chunksListAll = Arrays.asList(
                 "&3Owner: &6{ownerabr}",
                 " &3Type: &6{type}",
-                " &3Loaded: &6{loaded}"
+                " &3Loaded: &6{loaded}",
+                " &3Server: &6{server}"
         );
         public List<String> chunksListAlwayson = Arrays.asList(
                 "&3Owner: &6{ownerabr}",
                 " &3Type: &6{type}",
-                " &3Loaded: &6{loaded}"
+                " &3Loaded: &6{loaded}",
+                " &3Server: &6{server}"
         );
         public List<String> chunksListOnline = Arrays.asList(
                 "&3Owner: &6{ownerabr}",
                 " &3Type: &6{type}",
-                " &3Loaded: &6{loaded}"
+                " &3Loaded: &6{loaded}",
+                " &3Server: &6{server}"
         );
         public List<String> chunksListSelf = Arrays.asList(
                 "&3Owner: &6{ownerabr}",
                 " &3Type: &6{type}",
-                " &3Loaded: &6{loaded}"
+                " &3Loaded: &6{loaded}",
+                " &3Server: &6{server}"
         );
 
         public String chunksListNoChunkLoadersFound = "&eThere is currently no chunkloaders.";
@@ -187,6 +198,8 @@ public class MessagesConfig {
         }
 
         prefix = check(config.getNode("Prefix"), prefix).getString();
+
+        serverNameError = check(config.getNode("ChunkLoader", "ServerNameError"), serverNameError).getString();
 
         //ChunkLoader
         creationHelp = check(config.getNode("ChunkLoader", "CreationHelp"), creationHelp).getString();

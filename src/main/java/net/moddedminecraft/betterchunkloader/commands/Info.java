@@ -3,13 +3,15 @@ package net.moddedminecraft.betterchunkloader.commands;
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class Info implements CommandExecutor {
 
@@ -20,8 +22,8 @@ public class Info implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource sender, CommandContext commandContext) throws CommandException {
-        List<ChunkLoader> chunkLoaders = new ArrayList<>(plugin.getChunkLoaderData());
+    public CommandResult execute(CommandSource sender, CommandContext commandContext) {
+        List<ChunkLoader> chunkLoaders = plugin.getDataStore().getChunkLoaderData();
 
         if (chunkLoaders.isEmpty()) {
             sender.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().chunksInfoFailure));
