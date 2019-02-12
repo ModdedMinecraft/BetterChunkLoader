@@ -50,7 +50,7 @@ public final class H2DataStore implements IDataStore {
                     + "  r TINYINT(3) UNSIGNED NOT NULL,"
                     + "  creation BIGINT(20) NOT NULL,"
                     + "  alwaysOn BOOLEAN NOT NULL,"
-                    + "  server VARCHAR(36) NOT NULL,"
+                    + "  server VARCHAR(36) NOT NULL"
                     + ");");
 
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS " + plugin.getConfig().getCore().h2Prefix + "playerdata ("
@@ -58,7 +58,7 @@ public final class H2DataStore implements IDataStore {
                     + "uuid VARCHAR(36) NOT NULL PRIMARY KEY, "
                     + "lastOnline BIGINT(20) NOT NULL, "
                     + "onlineAmount SMALLINT(6) UNSIGNED NOT NULL, "
-                    + "alwaysOnAmount SMALLINT(6) UNSIGNED NOT NULL, "
+                    + "alwaysOnAmount SMALLINT(6) UNSIGNED NOT NULL"
                     + ");");
 
             getConnection().commit();
