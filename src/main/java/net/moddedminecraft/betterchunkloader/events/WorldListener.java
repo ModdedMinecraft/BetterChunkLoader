@@ -9,7 +9,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
-import org.spongepowered.api.event.world.UnloadWorldEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public class WorldListener {
         }
     }
 
-    @Listener
+    /*@Listener
     public void onWorldUnLoad(UnloadWorldEvent event) {
         final List<ChunkLoader> chunks = new ArrayList<ChunkLoader>(plugin.getDataStore().getChunkLoaders(event.getTargetWorld()));
         for (ChunkLoader chunk : chunks) {
@@ -46,7 +45,7 @@ public class WorldListener {
                 plugin.getChunkManager().unloadChunkLoader(chunk);
             }
         }
-    }
+    }*/
 
     @Listener
     public void onBlockBreak(ChangeBlockEvent.Break event) {
