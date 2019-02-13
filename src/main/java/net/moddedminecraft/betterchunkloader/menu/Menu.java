@@ -82,6 +82,48 @@ public class Menu {
         });
     }
 
+    public void updateMenu(Player player, ChunkLoader chunkLoader, Inventory inventory) {
+        plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
+            String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() + " " : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
+            if (title.length() > 32) {
+                title = title.substring(0, 32);
+            }
+            if (chunkLoader.getRadius() != -1) {
+                SlotPos slotPos = SlotPos.of(0, 0);
+                HashMap<Key, Object> keys = new HashMap<>();
+                List<Text> lores = new ArrayList<>();
+                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
+                keys.put(Keys.ITEM_LORE, lores);
+                keys.put(Keys.DISPLAY_NAME, Text.of("Remove"));
+                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys);
+            }
+
+            int pos = 2;
+            int maxRadius = 7;
+
+            if (!player.hasPermission(Permissions.UNLLIMITED_CHUNKS)) maxRadius = plugin.getConfig().getCore().maxSize;
+
+            if (maxRadius < 0) maxRadius = 0;
+            if (maxRadius > 7) maxRadius = 7;
+
+            for (int radius = 0; radius < maxRadius;) {
+                Integer chunks = Double.valueOf(Math.pow((2 * radius) + 1, 2)).intValue();
+                SlotPos slotPos = SlotPos.of(pos, 0);
+                HashMap<Key, Object> keys = new HashMap<>();
+                List<Text> lores = new ArrayList<>();
+                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
+                lores.add(Text.of("Radius: " + radius));
+                lores.add(Text.of("Chunks: " + chunks));
+                keys.put(Keys.ITEM_LORE, lores);
+                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + (radius + 1) + " [Active]" : "Size: " + (radius + 1))));
+                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
+                pos++;
+                radius++;
+            }
+            player.openInventory(inventory);
+        });
+    }
+
     public Consumer<ClickInventoryEvent> createMenuListener(ChunkLoader chunkLoader) {
         return event -> {
 

@@ -10,14 +10,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
+import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MenuListener {
     private final BetterChunkLoader plugin;
@@ -39,6 +40,8 @@ public class MenuListener {
 
         MenuProperty menuProperty = optMenuProperty.get();
         ChunkLoader chunkLoader = menuProperty.getValue();
+        Container targetContainer = event.getTargetInventory();
+        Inventory targetInventory = targetContainer.first();
 
         if (chunkLoader == null) {
             return;
@@ -77,6 +80,17 @@ public class MenuListener {
                             player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeFailure));
                             return;
                         } else {
+                            new Menu(plugin).showMenu(player, new ChunkLoader(
+                                    chunkLoader.getUniqueId(),
+                                    chunkLoader.getWorld(),
+                                    player.getUniqueId(),
+                                    chunkLoader.getLocation(),
+                                    chunkLoader.getChunk(),
+                                    -1,
+                                    System.currentTimeMillis(),
+                                    chunkLoader.isAlwaysOn(),
+                                    plugin.getConfig().getCore().server)
+                            );
                             player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeSuccess));
                             return;
                         }
@@ -115,6 +129,7 @@ public class MenuListener {
                                     plugin.getChunkManager().loadChunkLoader(chunkLoader);
                                     plugin.getLogger().info(player.getName() + " edited " + playerData.getName() + "'s chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " radius from " + oldRadius + " to " + radius.get());
                                     player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().updateSuccess, args));
+                                    updateMenu(player, chunkLoader, targetInventory);
                                     break;
                                 }
                             } else {
@@ -126,6 +141,7 @@ public class MenuListener {
                                     plugin.getChunkManager().loadChunkLoader(chunkLoader);
                                     plugin.getLogger().info(player.getName() + " made a new chunk loader at " + Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()) + " with radius " + chunkLoader.getRadius());
                                     player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().createSuccess));
+                                    updateMenu(player, chunkLoader, targetInventory);
                                     break;
                                 }
                             }
@@ -134,6 +150,12 @@ public class MenuListener {
                 }
             });
         }
+    }
+
+    private static void updateMenu(final Player player, final ChunkLoader chunkLoader, Inventory inventory) {
+        Task.builder().execute(new MenuUpdateTask(player, chunkLoader, inventory))
+                .delay(10, TimeUnit.MILLISECONDS)
+                .name("updating menu inventory.").submit(BetterChunkLoader.getInstance());
     }
 
     // All of this should be replaced when Sponge implements it's custom inventory data API.
