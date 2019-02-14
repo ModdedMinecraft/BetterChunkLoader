@@ -354,15 +354,24 @@ public final class MYSQLDataStore implements IDataStore {
     @Override
     public boolean updatePlayerData(PlayerData playerData) {
         try (Connection connection = getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("MERGE INTO " + plugin.getConfig().getCore().mysqlPrefix + "playerdata VALUES (?, ?, ?, ?, ?);");
-            statement.setString(1, playerData.getName());
-            statement.setString(2, playerData.getUnqiueId().toString());
-            statement.setLong(3, playerData.getLastOnline());
-            statement.setInt(4, playerData.getOnlineChunks());
-            statement.setInt(5, playerData.getAlwaysOnChunks());
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO " +
+                            plugin.getConfig().getCore().mysqlPrefix + "playerdata " +
+                            "(username, uuid, lastOnline, onlineAmount, alwaysOnAmount)" +
+                            " VALUES ('" + playerData.getName() + "'," +
+                            "'" + playerData.getUnqiueId().toString() + "'," +
+                            "'" + playerData.getLastOnline() + "'," +
+                            "'" + playerData.getOnlineChunks() + "'," +
+                            "'" + playerData.getAlwaysOnChunks() + "'" +
+                            ") ON DUPLICATE KEY UPDATE " +
+                            "username = '" + playerData.getName() + "'," +
+                            "uuid = '" + playerData.getUnqiueId().toString() + "'," +
+                            "lastOnline = '" + playerData.getLastOnline() + "'," +
+                            "onlineAmount = '" + playerData.getOnlineChunks() + "'," +
+                            "alwaysOnAmount = '" + playerData.getAlwaysOnChunks() + "';");
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error updating ticketdata", ex);
+            plugin.getLogger().error("MySQL: Error updating playerdata", ex);
         }
         return false;
     }
@@ -373,16 +382,31 @@ public final class MYSQLDataStore implements IDataStore {
             Optional<String> locationStr = plugin.serializer.serialize(chunkloader.getLocation());
             Optional<String> vectorStr = plugin.serializer.serialize(chunkloader.getChunk());
             if (locationStr.isPresent() && vectorStr.isPresent()) {
-                PreparedStatement statement = connection.prepareStatement("MERGE INTO " + plugin.getConfig().getCore().mysqlPrefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-                statement.setString(1, chunkloader.getUniqueId().toString());
-                statement.setString(2, chunkloader.getWorld().toString());
-                statement.setString(3, chunkloader.getOwner().toString());
-                statement.setObject(4, locationStr.get());
-                statement.setObject(5, vectorStr.get());
-                statement.setInt(6, chunkloader.getRadius());
-                statement.setLong(7, chunkloader.getCreation());
-                statement.setBoolean(8, chunkloader.isAlwaysOn());
-                statement.setString(9, chunkloader.getServer());
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO " +
+                                plugin.getConfig().getCore().mysqlPrefix + "chunkloaders " +
+                                "(uuid, world, owner, location, chunk, r, creation, alwaysOn, server)" +
+                                " VALUES ('" + chunkloader.getUniqueId().toString() + "'," +
+                                "'" + chunkloader.getWorld().toString() + "'," +
+                                "'" + chunkloader.getOwner().toString() + "'," +
+                                "'" + locationStr.get() + "'," +
+                                "'" + vectorStr.get() + "'," +
+                                "'" + chunkloader.getRadius() + "'," +
+                                "'" + chunkloader.getCreation() + "'," +
+                                "?," +
+                                "'" + chunkloader.getServer() +  "'" +
+                                ") ON DUPLICATE KEY UPDATE " +
+                                "uuid = '" + chunkloader.getUniqueId().toString() + "'," +
+                                "world = '" + chunkloader.getWorld().toString() + "'," +
+                                "owner = '" + chunkloader.getOwner().toString() + "'," +
+                                "location = '" + locationStr.get() + "'," +
+                                "chunk = '" + vectorStr.get() + "'," +
+                                "r = '" + chunkloader.getRadius() + "'," +
+                                "creation = '" + chunkloader.getCreation() + "'," +
+                                "alwaysOn = ?," +
+                                "server = '" + chunkloader.getServer() + "';");
+                statement.setBoolean(1, chunkloader.isAlwaysOn());
+                statement.setBoolean(2, chunkloader.isAlwaysOn());
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException ex) {
