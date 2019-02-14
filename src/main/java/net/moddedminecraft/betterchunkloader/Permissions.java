@@ -80,4 +80,11 @@ public class Permissions {
      */
     public static final String COMMAND_PURGE = "betterchunkloader.commands.purge";
 
+    /**
+     * Sub permissions for betterchunkloader.commands.transfer
+     *
+     * betterchunkloader.commands.transfer.base
+     */
+    public static final String COMMAND_TRANSFER = "betterchunkloader.commands.transfer";
+
 }

@@ -133,6 +133,13 @@ public class CommandManager {
                 .permission(Permissions.COMMAND_PURGE + ".base")
                 .build();
 
+        // /bcl transfer
+        CommandSpec cmdTransfer = CommandSpec.builder()
+                .executor(new Transfer(this.plugin))
+                .permission(Permissions.COMMAND_TRANSFER + ".base")
+                .build();
+
+
         CommandSpec mclCmdSpec = CommandSpec.builder()
                 .child(cmdBalance, "balance", "bal")
                 .child(cmdInfo, "info", "i")
@@ -141,6 +148,7 @@ public class CommandManager {
                 .child(cmdDelete, "delete", "d")
                 .child(cmdPurge, "purge")
                 .child(cmdReload, "reload")
+                .child(cmdTransfer, "transfer")
                 .executor(new BCL(this.plugin))
                 .build();
 

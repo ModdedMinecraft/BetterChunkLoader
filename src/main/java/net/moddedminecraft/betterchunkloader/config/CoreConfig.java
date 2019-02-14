@@ -60,6 +60,12 @@ public class CoreConfig {
     public String mysqlPrefix;
     public String server;
 
+    //Transferdata
+    public String transferMysqlHost;
+    public String transferMysqlDatabase;
+    public String transferMysqlUser;
+    public String transferMysqlPass;
+
 
 
     private void configCheck() throws IOException {
@@ -104,6 +110,13 @@ public class CoreConfig {
         mysqlUser = check(config.getNode("Storage", "mysql", "user"), "root", "The user for the database").getString();
         mysqlPass = check(config.getNode("Storage", "mysql", "password"), "pass", "Password for that user").getString();
         mysqlPrefix = check(config.getNode("Storage", "mysql", "table-prefix"), "bcl_", "Prefix for the plugin tables").getString();
+
+        //TransferData
+        config.getNode("Transfer").setComment("Transfer playerData from KasperFranz BetterChunkLoader, Only use this to transfer to a fresh database!!!");
+        transferMysqlHost = check(config.getNode("Transfer", "Storage", "mysql", "host"), "host").getString();
+        transferMysqlDatabase = check(config.getNode("Transfer", "Storage", "mysql", "database"), "db").getString();
+        transferMysqlUser = check(config.getNode("Transfer", "Storage", "mysql", "user"), "user" ).getString();
+        transferMysqlPass = check(config.getNode("Transfer", "Storage", "mysql", "password"), "pass" ).getString();
 
 
         loader.save(config);
