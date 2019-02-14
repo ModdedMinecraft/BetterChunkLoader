@@ -66,7 +66,7 @@ public class Info implements CommandExecutor {
         args.put("playerCount", String.valueOf(playerCount));
 
         plugin.getPaginationService().builder()
-                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().infoItems, args))
+                .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().chunksInfoItems, args))
                 .title(Utilities.parseMessage(plugin.getConfig().getMessages().infoTitle))
                 .padding(Utilities.parseMessage(plugin.getConfig().getMessages().infoPadding))
                 .sendTo(sender);
