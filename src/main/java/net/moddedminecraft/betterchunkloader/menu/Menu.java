@@ -115,7 +115,7 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + (radius + 1) + " [Active]" : "Size: " + (radius + 1))));
+                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + getReadableSize(radius + 1) + " [Active]" : "Size: " + getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 pos++;
                 radius++;
