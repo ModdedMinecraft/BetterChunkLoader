@@ -190,6 +190,13 @@ public class MessagesConfig {
     public String chunksReloadSuccess = "&aReload success for: &e{type}&a.";
     public String chunksReloadFailure = "&cReload failed for: &e{type}&c, check console for more information.";
 
+    public String menuChunkTitle1 = "Size: 1x1 Chunks";
+    public String menuChunkTitle2 = "Size: 3x3 Chunks";
+    public String menuChunkTitle3 = "Size: 5x5 Chunks";
+    public String menuChunkTitle4 = "Size: 7x7 Chunks";
+    public String menuChunkTitle5 = "Size: 9x9 Chunks";
+    public String menuChunkTitle6 = "Size: 11x11 Chunks";
+    public String menuChunkTitle7 = "Size: 13x13 Chunks";
 
 
     private void configCheck() throws IOException, ObjectMappingException {
@@ -200,6 +207,15 @@ public class MessagesConfig {
         prefix = check(config.getNode("Prefix"), prefix).getString();
 
         serverNameError = check(config.getNode("ChunkLoader", "ServerNameError"), serverNameError).getString();
+
+        //Menu
+        menuChunkTitle1 = check(config.getNode("Menu", "Chunks", "1"), menuChunkTitle1).getString();
+        menuChunkTitle2 = check(config.getNode("Menu", "Chunks", "2"), menuChunkTitle2).getString();
+        menuChunkTitle3 = check(config.getNode("Menu", "Chunks", "3"), menuChunkTitle3).getString();
+        menuChunkTitle4 = check(config.getNode("Menu", "Chunks", "4"), menuChunkTitle4).getString();
+        menuChunkTitle5 = check(config.getNode("Menu", "Chunks", "5"), menuChunkTitle5).getString();
+        menuChunkTitle6 = check(config.getNode("Menu", "Chunks", "6"), menuChunkTitle6).getString();
+        menuChunkTitle7 = check(config.getNode("Menu", "Chunks", "7"), menuChunkTitle7).getString();
 
         //ChunkLoader
         creationHelp = check(config.getNode("ChunkLoader", "CreationHelp"), creationHelp).getString();

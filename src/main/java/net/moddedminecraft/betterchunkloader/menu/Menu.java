@@ -73,7 +73,7 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + getReadableSize(radius + 1) + " [Active]" : "Size: " + getReadableSize(radius + 1))));
+                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? getReadableSize(radius + 1) + " [Active]" : getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 pos++;
                 radius++;
@@ -115,7 +115,7 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + getReadableSize(radius + 1) + " [Active]" : "Size: " + getReadableSize(radius + 1))));
+                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? getReadableSize(radius + 1) + " [Active]" : getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 pos++;
                 radius++;
@@ -127,21 +127,21 @@ public class Menu {
     private String getReadableSize(int i) {
         switch (i) {
             case 1:
-                return "1x1";
+                return plugin.getConfig().getMessages().menuChunkTitle1;
             case 2:
-                return "3x3";
+                return plugin.getConfig().getMessages().menuChunkTitle2;
             case 3:
-                return "5x5";
+                return plugin.getConfig().getMessages().menuChunkTitle3;
             case 4:
-                return "7x7";
+                return plugin.getConfig().getMessages().menuChunkTitle4;
             case 5:
-                return "9x9";
+                return plugin.getConfig().getMessages().menuChunkTitle5;
             case 6:
-                return "11x11";
+                return plugin.getConfig().getMessages().menuChunkTitle6;
             case 7:
-                return "13x13";
+                return plugin.getConfig().getMessages().menuChunkTitle7;
             default:
-                return "" + i;
+                return "Size: " + i;
         }
     }
 
