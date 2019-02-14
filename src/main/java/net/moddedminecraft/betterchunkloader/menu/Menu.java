@@ -73,7 +73,7 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + (radius + 1) + " [Active]" : "Size: " + (radius + 1))));
+                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? "Size: " + getReadableSize(radius + 1) + " [Active]" : "Size: " + getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 pos++;
                 radius++;
@@ -122,6 +122,27 @@ public class Menu {
             }
             player.openInventory(inventory);
         });
+    }
+
+    private String getReadableSize(int i) {
+        switch (i) {
+            case 1:
+                return "1x1";
+            case 2:
+                return "3x3";
+            case 3:
+                return "5x5";
+            case 4:
+                return "7x7";
+            case 5:
+                return "9x9";
+            case 6:
+                return "11x11";
+            case 7:
+                return "13x13";
+            default:
+                return "" + i;
+        }
     }
 
     public Consumer<ClickInventoryEvent> createMenuListener(ChunkLoader chunkLoader) {
