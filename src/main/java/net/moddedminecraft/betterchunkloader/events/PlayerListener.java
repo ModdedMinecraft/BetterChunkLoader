@@ -48,12 +48,14 @@ public class PlayerListener {
                 Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(player.getUniqueId());
                 if (playerData.isPresent() && !playerData.get().getName().equals(player.getName())) {
                     playerData.get().setName(player.getName());
+                    plugin.getDataStore().updatePlayerData(playerData.get());
                 }
             }).delay(15, TimeUnit.SECONDS).name("betterchunkloader-s-checkUserNameOnLogin").submit(this.plugin);
         }
 
         plugin.getDataStore().getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
             playerData.setLastOnline(System.currentTimeMillis());
+            plugin.getDataStore().updatePlayerData(playerData);
         });
 
         final List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByOwner(player.getUniqueId());
@@ -70,6 +72,7 @@ public class PlayerListener {
     public void onPlayerQuit(ClientConnectionEvent.Disconnect event, @Root Player player) {
         plugin.getDataStore().getPlayerDataFor(player.getUniqueId()).ifPresent((playerData) -> {
             playerData.setLastOnline(System.currentTimeMillis());
+            plugin.getDataStore().updatePlayerData(playerData);
         });
 
         final List<ChunkLoader> clList = plugin.getDataStore().getChunkLoadersByOwner(player.getUniqueId());
