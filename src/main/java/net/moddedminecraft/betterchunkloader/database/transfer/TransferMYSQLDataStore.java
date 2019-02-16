@@ -49,7 +49,7 @@ public final class TransferMYSQLDataStore implements TransferIDataStore {
             ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM " + "bcl_playersdata");
             while (rs.next()) {
                 PlayerData playerData = new PlayerData(
-                        "null",
+                        "blank",
                         UUID.fromString(rs.getString("pid")),
                         System.currentTimeMillis(),
                         rs.getInt("onlineonly"),

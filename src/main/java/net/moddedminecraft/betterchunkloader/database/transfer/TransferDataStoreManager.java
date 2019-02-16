@@ -21,17 +21,14 @@ public final class TransferDataStoreManager {
             clearDataStores();
         }
         registerDataStore("MYSQL", TransferMYSQLDataStore.class);
-        switch (plugin.getConfig().getCore().storageEngine.toUpperCase()) {
-            case "MYSQL":
-                setDataStoreInstance("MYSQL");
-                plugin.getLogger().info("Loading transfer datastore: MySQL");
-                return getDataStore().load();
-            default:
-                plugin.getLogger().error("Unable to determine selected datastore.");
-                plugin.getLogger().info("Available datastores: " + getAvailableDataStores().toString());
-                return false;
+        if (!plugin.getConfig().getCore().transferMysqlHost.equals("host")) {
+            setDataStoreInstance("MYSQL");
+            plugin.getLogger().info("Loading transfer datastore: MySQL");
+            return getDataStore().load();
         }
+        return false;
     }
+
 
     /**
      * Register a new Data Store. This should be run at onLoad()<br>
