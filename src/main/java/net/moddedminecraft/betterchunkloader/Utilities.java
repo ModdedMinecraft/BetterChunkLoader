@@ -125,7 +125,11 @@ public class Utilities {
         String option = subject.getOption(subject.getActiveContexts(), key).orElse(null);
         if (option != null) {
             try {
-                return Integer.parseInt(option);
+                int value = Integer.parseInt(option);
+                if (value < 0) {
+                    value = 0;
+                }
+                return value;
             } catch (NumberFormatException e) {
                 return 0;
             }
