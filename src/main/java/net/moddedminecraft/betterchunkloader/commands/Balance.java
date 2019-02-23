@@ -52,8 +52,8 @@ public class Balance implements CommandExecutor {
     private boolean chunksInfo(CommandSource sender, User player, boolean other) {
         Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(player.getUniqueId());
         if (playerData.isPresent()) {
-            int defaultOnline = plugin.getConfig().getCore().defaultOnline;
-            int defaultAlwayson = plugin.getConfig().getCore().defaultAlwaysOn;
+            int defaultOnline = Utilities.getChunkCountFromSubject(player, "online-chunks");
+            int defaultAlwayson = Utilities.getChunkCountFromSubject(player, "alwayson-chunks");
             int onlineUsed = plugin.getDataStore().getUsedChunks(playerData.get().getUnqiueId(), false);
             int alwaysonUsed = plugin.getDataStore().getUsedChunks(playerData.get().getUnqiueId(), true);
 

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.GameProfileManager;
+import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -118,5 +119,17 @@ public class Utilities {
             return Optional.ofNullable(profile.get().getUniqueId());
         }
         return Optional.empty();
+    }
+
+    public static Integer getChunkCountFromSubject(Subject subject, String key) {
+        String option = subject.getOption(subject.getActiveContexts(), key).orElse(null);
+        if (option != null) {
+            try {
+                return Integer.parseInt(option);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+        return 0;
     }
 }

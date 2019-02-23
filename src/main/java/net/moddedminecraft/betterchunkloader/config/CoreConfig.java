@@ -39,11 +39,8 @@ public class CoreConfig {
     public Integer loadDelay = 10;
     public String wandType = "minecraft:blaze_rod";
 
-    public Integer defaultOnline = 1;
     public Integer maxOnline = 100;
     public String onlineBlockType = "minecraft:iron_block";
-
-    public Integer defaultAlwaysOn = 0;
     public Integer maxAlwaysOn = 50;
     public Integer alwaysOnExpiry = 24;
     public String alwaysOnBlockType = "minecraft:diamond_block";
@@ -90,12 +87,10 @@ public class CoreConfig {
         wandType = check(config.getNode("ChunkLoader", "WandType"), wandType).getString();
 
         //ChunkLoader Online
-        defaultOnline = check(config.getNode("ChunkLoader", "Online", "DefaultOnline"), defaultOnline).getInt();
         maxOnline = check(config.getNode("ChunkLoader", "Online", "MaxOnline"), maxOnline).getInt();
         onlineBlockType = check(config.getNode("ChunkLoader", "Online", "BlockType"), onlineBlockType).getString();
 
         //ChunkLoader AlwaysOn
-        defaultAlwaysOn = check(config.getNode("ChunkLoader", "AlwaysOn", "DefaultAlwaysOn"), defaultAlwaysOn).getInt();
         maxAlwaysOn = check(config.getNode("ChunkLoader", "AlwaysOn", "MaxAlwaysOn"), maxAlwaysOn).getInt();
         alwaysOnExpiry = check(config.getNode("ChunkLoader", "AlwaysOn", "Expiry"), alwaysOnExpiry, "Max amount in hours the owner can be offline before considering this loader 'Expired'").getInt();
         alwaysOnBlockType = check(config.getNode("ChunkLoader", "AlwaysOn", "BlockType"), alwaysOnBlockType).getString();
