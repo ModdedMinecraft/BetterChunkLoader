@@ -124,24 +124,24 @@ public class Menu {
         });
     }
 
-    private String getReadableSize(int i) {
+    private Text getReadableSize(int i) {
         switch (i) {
             case 1:
-                return plugin.getConfig().getMessages().menuChunkTitle1;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle1);
             case 2:
-                return plugin.getConfig().getMessages().menuChunkTitle2;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle2);
             case 3:
-                return plugin.getConfig().getMessages().menuChunkTitle3;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle3);
             case 4:
-                return plugin.getConfig().getMessages().menuChunkTitle4;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle4);
             case 5:
-                return plugin.getConfig().getMessages().menuChunkTitle5;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle5);
             case 6:
-                return plugin.getConfig().getMessages().menuChunkTitle6;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle6);
             case 7:
-                return plugin.getConfig().getMessages().menuChunkTitle7;
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle7);
             default:
-                return "Size: " + i;
+                return Utilities.parseMessage("Size: " + i);
         }
     }
 
