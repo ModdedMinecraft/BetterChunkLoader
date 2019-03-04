@@ -2,8 +2,10 @@ package net.moddedminecraft.betterchunkloader.menu;
 
 import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Permissions;
+import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -17,9 +19,8 @@ import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Menu {
@@ -49,11 +50,8 @@ public class Menu {
             if (chunkLoader.getRadius() != -1) {
                 SlotPos slotPos = SlotPos.of(0, 0);
                 HashMap<Key, Object> keys = new HashMap<>();
-                List<Text> lores = new ArrayList<>();
-                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
-                keys.put(Keys.ITEM_LORE, lores);
                 keys.put(Keys.DISPLAY_NAME, Text.of("Remove"));
-                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys);
+                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys, slotPos.getX(), slotPos.getY(), -1, -1);
             }
 
             int pos = 2;
@@ -68,13 +66,8 @@ public class Menu {
                 Integer chunks = Double.valueOf(Math.pow((2 * radius) + 1, 2)).intValue();
                 SlotPos slotPos = SlotPos.of(pos, 0);
                 HashMap<Key, Object> keys = new HashMap<>();
-                List<Text> lores = new ArrayList<>();
-                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
-                lores.add(Text.of("Radius: " + radius));
-                lores.add(Text.of("Chunks: " + chunks));
-                keys.put(Keys.ITEM_LORE, lores);
-                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 keys.put(Keys.DISPLAY_NAME, (chunkLoader.getRadius() == radius ? getReadableSize(radius + 1, true) : getReadableSize(radius + 1, false)));
+                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys, slotPos.getX(), slotPos.getY(), radius, chunks);
                 pos++;
                 radius++;
             }
@@ -84,18 +77,11 @@ public class Menu {
 
     public void updateMenu(Player player, ChunkLoader chunkLoader, Inventory inventory) {
         plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
-            String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() + " " : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
-            if (title.length() > 32) {
-                title = title.substring(0, 32);
-            }
             if (chunkLoader.getRadius() != -1) {
                 SlotPos slotPos = SlotPos.of(0, 0);
                 HashMap<Key, Object> keys = new HashMap<>();
-                List<Text> lores = new ArrayList<>();
-                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
-                keys.put(Keys.ITEM_LORE, lores);
                 keys.put(Keys.DISPLAY_NAME, Text.of("Remove"));
-                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys);
+                addMenuOption(inventory, slotPos, REMOVE_TYPE, keys, slotPos.getX(), slotPos.getY(), -1, -1);
             }
 
             int pos = 2;
@@ -110,13 +96,8 @@ public class Menu {
                 Integer chunks = Double.valueOf(Math.pow((2 * radius) + 1, 2)).intValue();
                 SlotPos slotPos = SlotPos.of(pos, 0);
                 HashMap<Key, Object> keys = new HashMap<>();
-                List<Text> lores = new ArrayList<>();
-                lores.add(Text.of("SlotPos: " + slotPos.getX() + "," + slotPos.getY()));
-                lores.add(Text.of("Radius: " + radius));
-                lores.add(Text.of("Chunks: " + chunks));
-                keys.put(Keys.ITEM_LORE, lores);
-                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
                 keys.put(Keys.DISPLAY_NAME, (chunkLoader.getRadius() == radius ? getReadableSize(radius + 1, true) : getReadableSize(radius + 1, false)));
+                addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys, slotPos.getX(), slotPos.getY(), radius, chunks);
                 pos++;
                 radius++;
             }
@@ -155,11 +136,35 @@ public class Menu {
         };
     }
 
-    public void addMenuOption(Inventory inventory, SlotPos slotPos, ItemType icon, HashMap<Key, Object> keys) {
+    public void addMenuOption(Inventory inventory, SlotPos slotPos, ItemType icon, HashMap<Key, Object> keys, int x, int y, int radius, int chunks) {
         ItemStack itemStack = ItemStack.builder().itemType(icon).quantity(1).build();
-        keys.entrySet().forEach((entry) -> {
+
+        for (Map.Entry<Key, Object> entry : keys.entrySet()) {
             itemStack.offer(entry.getKey(), entry.getValue());
-        });
+        }
+
+        itemStack.toContainer()
+                .set(DataQuery.of("UnsafeData","SLOTPOS1"), x)
+                .set(DataQuery.of("UnsafeData","SLOTPOS2"), y);
+        itemStack = ItemStack.builder().fromContainer(
+                itemStack.toContainer()
+                        .set(DataQuery.of("UnsafeData","SLOTPOS1"), x)
+                        .set(DataQuery.of("UnsafeData","SLOTPOS2"), y))
+                .build();
+
+        if (radius >= 0) {
+            itemStack = ItemStack.builder().fromContainer(
+                    itemStack.toContainer()
+                            .set(DataQuery.of("UnsafeData", "RADIUS"), radius))
+                    .build();
+        }
+        if (chunks > 0) {
+            itemStack = ItemStack.builder().fromContainer(
+                    itemStack.toContainer()
+                            .set(DataQuery.of("UnsafeData", "CHUNKS"), chunks))
+                    .build();
+        }
+
         inventory.query(slotPos).first().set(itemStack);
     }
 }

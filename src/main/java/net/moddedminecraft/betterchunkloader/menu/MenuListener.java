@@ -4,20 +4,21 @@ import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class MenuListener {
@@ -162,13 +163,10 @@ public class MenuListener {
     public Optional<SlotPos> getSlotPos(Transaction<ItemStackSnapshot> transaction) {
         if (transaction.isValid()) {
             try { //SlotPos: X,Y
-                List<Text> lore = transaction.getFinal().getOrElse(Keys.ITEM_LORE, new ArrayList<>());
-                for (Text text : lore) {
-                    if (text.toPlain().contains("SlotPos:")) {
-                        String[] values = text.toPlain().substring(9).split(",");
-                        return Optional.ofNullable(new SlotPos(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
-                    }
-                }
+                ItemStack stack = transaction.getFinal().createStack();
+                int one = Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "SLOTPOS1")).get().toString());
+                int two = Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "SLOTPOS2")).get().toString());
+                return Optional.of(new SlotPos(one, two));
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
@@ -179,12 +177,8 @@ public class MenuListener {
     public Optional<Integer> getRadius(Transaction<ItemStackSnapshot> transaction) {
         if (transaction.isValid()) {
             try { //Radius: V
-                List<Text> lore = transaction.getFinal().getOrElse(Keys.ITEM_LORE, new ArrayList<>());
-                for (Text text : lore) {
-                    if (text.toPlain().contains("Radius:")) {
-                        return Optional.ofNullable(Integer.parseInt(text.toPlain().substring(8)));
-                    }
-                }
+                ItemStack stack = transaction.getFinal().createStack();
+                return Optional.of(Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "RADIUS")).get().toString()));
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
@@ -195,12 +189,8 @@ public class MenuListener {
     public Optional<Integer> getChunks(Transaction<ItemStackSnapshot> transaction) {
         if (transaction.isValid()) {
             try { //Chunks: V
-                List<Text> lore = transaction.getFinal().getOrElse(Keys.ITEM_LORE, new ArrayList<>());
-                for (Text text : lore) {
-                    if (text.toPlain().contains("Chunks:")) {
-                        return Optional.ofNullable(Integer.parseInt(text.toPlain().substring(8)));
-                    }
-                }
+                ItemStack stack = transaction.getFinal().createStack();
+                return Optional.of(Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "CHUNKS")).get().toString()));
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
