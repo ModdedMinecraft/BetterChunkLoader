@@ -36,7 +36,7 @@ public class Menu {
 
     public void showMenu(Player player, ChunkLoader chunkLoader) {
         plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
-            String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() + " " : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
+            String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
             if (title.length() > 32) {
                 title = title.substring(0, 32);
             }
@@ -73,8 +73,8 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? getReadableSize(radius + 1) + " [Active]" : getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
+                keys.put(Keys.DISPLAY_NAME, (chunkLoader.getRadius() == radius ? getReadableSize(radius + 1, true) : getReadableSize(radius + 1, false)));
                 pos++;
                 radius++;
             }
@@ -115,8 +115,8 @@ public class Menu {
                 lores.add(Text.of("Radius: " + radius));
                 lores.add(Text.of("Chunks: " + chunks));
                 keys.put(Keys.ITEM_LORE, lores);
-                keys.put(Keys.DISPLAY_NAME, Text.of((chunkLoader.getRadius() == radius ? getReadableSize(radius + 1) + " [Active]" : getReadableSize(radius + 1))));
                 addMenuOption(inventory, slotPos, (chunkLoader.getRadius() == radius ? ACTIVE_TYPE : INACTIVE_TYPE), keys);
+                keys.put(Keys.DISPLAY_NAME, (chunkLoader.getRadius() == radius ? getReadableSize(radius + 1, true) : getReadableSize(radius + 1, false)));
                 pos++;
                 radius++;
             }
@@ -124,22 +124,26 @@ public class Menu {
         });
     }
 
-    private Text getReadableSize(int i) {
+    private Text getReadableSize(int i, boolean active) {
+        String status = "";
+        if (active) {
+            status = " [Active]";
+        }
         switch (i) {
             case 1:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle1);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle1 + status);
             case 2:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle2);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle2 + status);
             case 3:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle3);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle3 + status);
             case 4:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle4);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle4 + status);
             case 5:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle5);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle5 + status);
             case 6:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle6);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle6 + status);
             case 7:
-                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle7);
+                return Utilities.parseMessage(plugin.getConfig().getMessages().menuChunkTitle7 + status);
             default:
                 return Utilities.parseMessage("Size: " + i);
         }
