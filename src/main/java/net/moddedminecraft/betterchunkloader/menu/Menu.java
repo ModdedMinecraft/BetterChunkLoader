@@ -37,10 +37,15 @@ public class Menu {
 
     public void showMenu(Player player, ChunkLoader chunkLoader) {
         plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
-            String title = (chunkLoader.getRadius() != -1 ? "BCL: " + playerData.getName() + " Chunks: " + chunkLoader.getChunks() : chunkLoader.isAlwaysOn() ? "Always On Chunk Loader" : "Online Only ChunkLoader");
-            if (title.length() > 32) {
-                title = title.substring(0, 32);
-            }
+            HashMap<String, String> args = new HashMap<>();
+            args.put("player", playerData.getName());
+            args.put("chunks", chunkLoader.getChunks().toString());
+
+            Text mainTitle = Utilities.parseMessage(BetterChunkLoader.getInstance().getConfig().getMessages().menuTitleActive, args);
+            Text alwaysOnTitle = Utilities.parseMessage(BetterChunkLoader.getInstance().getConfig().getMessages().menuAlwaysOnTitle);
+            Text onlineTitle = Utilities.parseMessage(BetterChunkLoader.getInstance().getConfig().getMessages().menuOnlineTitle);
+
+            Text title = (chunkLoader.getRadius() != -1 ? mainTitle : chunkLoader.isAlwaysOn() ? alwaysOnTitle : onlineTitle);
             Inventory inventory = Inventory.builder()
                     .of(InventoryArchetypes.MENU_ROW)
                     .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(Text.of(title)))

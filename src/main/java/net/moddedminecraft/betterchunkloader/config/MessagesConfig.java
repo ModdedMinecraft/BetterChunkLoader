@@ -197,6 +197,9 @@ public class MessagesConfig {
     public String menuChunkTitle5 = "Size: 9x9 Chunks";
     public String menuChunkTitle6 = "Size: 11x11 Chunks";
     public String menuChunkTitle7 = "Size: 13x13 Chunks";
+    public String menuTitleActive = "&7BCL: &4{player} Chunks: {chunks}";
+    public String menuAlwaysOnTitle = "Always On Chunk Loader";
+    public String menuOnlineTitle = "Online Only ChunkLoader";
 
 
     private void configCheck() throws IOException, ObjectMappingException {
@@ -216,6 +219,9 @@ public class MessagesConfig {
         menuChunkTitle5 = check(config.getNode("Menu", "Chunks", "5"), menuChunkTitle5).getString();
         menuChunkTitle6 = check(config.getNode("Menu", "Chunks", "6"), menuChunkTitle6).getString();
         menuChunkTitle7 = check(config.getNode("Menu", "Chunks", "7"), menuChunkTitle7).getString();
+        menuTitleActive = check(config.getNode("Menu", "Title", "Main"), menuTitleActive).getString();
+        menuAlwaysOnTitle = check(config.getNode("Menu", "Title", "AlwaysOn"), menuAlwaysOnTitle).getString();
+        menuOnlineTitle = check(config.getNode("Menu", "Title", "Online"), menuOnlineTitle).getString();
 
         //ChunkLoader
         creationHelp = check(config.getNode("ChunkLoader", "CreationHelp"), creationHelp).getString();
