@@ -4,6 +4,7 @@ import net.moddedminecraft.betterchunkloader.BetterChunkLoader;
 import net.moddedminecraft.betterchunkloader.Utilities;
 import net.moddedminecraft.betterchunkloader.data.ChunkLoader;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.Player;
@@ -164,9 +165,15 @@ public class MenuListener {
         if (transaction.isValid()) {
             try { //SlotPos: X,Y
                 ItemStack stack = transaction.getFinal().createStack();
-                int one = Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "SLOTPOS1")).get().toString());
-                int two = Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "SLOTPOS2")).get().toString());
-                return Optional.of(new SlotPos(one, two));
+                DataContainer cont = stack.toContainer();
+                DataQuery q1 = DataQuery.of("UnsafeData", "SLOTPOS1");
+                DataQuery q2 = DataQuery.of("UnsafeData", "SLOTPOS2");
+                if (cont.get(q1).isPresent() && cont.get(q2).isPresent()) {
+                    int one = Integer.parseInt(cont.get(q2).get().toString());
+                    int two = Integer.parseInt(cont.get(q2).get().toString());
+                    return Optional.of(new SlotPos(one, two));
+                }
+                return Optional.empty();
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
@@ -178,7 +185,12 @@ public class MenuListener {
         if (transaction.isValid()) {
             try { //Radius: V
                 ItemStack stack = transaction.getFinal().createStack();
-                return Optional.of(Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "RADIUS")).get().toString()));
+                DataContainer cont = stack.toContainer();
+                DataQuery q1 = DataQuery.of("UnsafeData", "RADIUS");
+                if (cont.get(q1).isPresent()) {
+                    return Optional.of(Integer.parseInt(cont.get(q1).get().toString()));
+                }
+                return Optional.empty();
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
@@ -190,7 +202,12 @@ public class MenuListener {
         if (transaction.isValid()) {
             try { //Chunks: V
                 ItemStack stack = transaction.getFinal().createStack();
-                return Optional.of(Integer.parseInt(stack.toContainer().get(DataQuery.of("UnsafeData", "CHUNKS")).get().toString()));
+                DataContainer cont = stack.toContainer();
+                DataQuery q1 = DataQuery.of("UnsafeData", "CHUNKS");
+                if (cont.get(q1).isPresent()) {
+                    return Optional.of(Integer.parseInt(cont.get(q1).get().toString()));
+                }
+                return Optional.empty();
             } catch (NumberFormatException ex) {
                 return Optional.empty();
             }
