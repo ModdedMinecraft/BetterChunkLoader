@@ -169,7 +169,7 @@ public class MenuListener {
                 DataQuery q1 = DataQuery.of("UnsafeData", "SLOTPOS1");
                 DataQuery q2 = DataQuery.of("UnsafeData", "SLOTPOS2");
                 if (cont.get(q1).isPresent() && cont.get(q2).isPresent()) {
-                    int one = Integer.parseInt(cont.get(q2).get().toString());
+                    int one = Integer.parseInt(cont.get(q1).get().toString());
                     int two = Integer.parseInt(cont.get(q2).get().toString());
                     return Optional.of(new SlotPos(one, two));
                 }
