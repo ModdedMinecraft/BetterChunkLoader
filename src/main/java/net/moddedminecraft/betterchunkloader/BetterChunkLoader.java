@@ -14,7 +14,6 @@ import net.moddedminecraft.betterchunkloader.database.IDataStore;
 import net.moddedminecraft.betterchunkloader.events.PlayerListener;
 import net.moddedminecraft.betterchunkloader.events.WorldListener;
 import net.moddedminecraft.betterchunkloader.menu.MenuListener;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -30,7 +29,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.pagination.PaginationService;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -72,7 +70,7 @@ public class BetterChunkLoader {
 
 
     @Listener
-    public void Init(GameInitializationEvent event) throws IOException, ObjectMappingException {
+    public void Init(GameInitializationEvent event) {
         plugin = this;
         config = new Config(this);
         serializer = new VectorSerializer(this);
@@ -82,7 +80,7 @@ public class BetterChunkLoader {
     }
 
     @Listener
-    public void onServerAboutStart(GameAboutToStartServerEvent event) throws IOException, ObjectMappingException {
+    public void onServerAboutStart(GameAboutToStartServerEvent event) {
         if (config.loadCore() && config.loadMessages()) {
             dataStoreManager = new DataStoreManager(this);
             if (dataStoreManager.load()) {
@@ -120,7 +118,7 @@ public class BetterChunkLoader {
     }
 
     @Listener
-    public void onServerStopping(GameStoppingServerEvent event) throws IOException, ObjectMappingException {
+    public void onServerStopping(GameStoppingServerEvent event) {
         //saveData();
         getDataStore().getChunkLoaderData().stream().forEachOrdered((cl) -> {
             getChunkManager().unloadChunkLoader(cl);
