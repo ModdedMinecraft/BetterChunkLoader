@@ -82,6 +82,7 @@ public class ChunkManager {
         for (Chunk chunk : chunks) {
             unloadChunk(chunkLoader, chunk);
         }
+        releaseTicket(chunkLoader);
         return true;
     }
 
@@ -92,6 +93,22 @@ public class ChunkManager {
             }
         }
         return Optional.empty();
+    }
+
+    private void releaseTicket(ChunkLoader chunkLoader) {
+        if (!ticketManager.isPresent()) {
+            return;
+        }
+        if (tickets.containsKey(chunkLoader.getUniqueId())) {
+            Optional<ChunkTicketManager.LoadingTicket> ticket = tickets.get(chunkLoader.getUniqueId());
+            if (ticket.isPresent()) {
+                ticket.get().release();
+                tickets.remove(chunkLoader.getUniqueId());
+                if (plugin.getConfig().getCore().debug) {
+                    plugin.getLogger().info("RELEASE Chunkloader: " + chunkLoader.getUniqueId());
+                }
+            }
+        }
     }
 
     /**
@@ -172,5 +189,8 @@ public class ChunkManager {
         return field;
     }
 
+    public Optional<ChunkTicketManager> getTicketManager() {
+        return ticketManager;
+    }
 
 }
