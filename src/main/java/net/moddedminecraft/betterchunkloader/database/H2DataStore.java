@@ -51,7 +51,8 @@ public final class H2DataStore implements IDataStore {
                     + "  r TINYINT(3) UNSIGNED NOT NULL,"
                     + "  creation BIGINT(20) NOT NULL,"
                     + "  alwaysOn BOOLEAN NOT NULL,"
-                    + "  server VARCHAR(36) NOT NULL"
+                    + "  server VARCHAR(36) NOT NULL,"
+                    + "  isAdmin BOOLEAN NOT NULL"
                     + ");");
 
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS " + plugin.getConfig().getCore().h2Prefix + "playerdata ("
@@ -61,6 +62,11 @@ public final class H2DataStore implements IDataStore {
                     + "onlineAmount SMALLINT(6) UNSIGNED NOT NULL, "
                     + "alwaysOnAmount SMALLINT(6) UNSIGNED NOT NULL"
                     + ");");
+
+            //TODO CHECK THIS AND MYSQL
+            connection.createStatement().executeUpdate("ALTER TABLE IF EXISTS " + plugin.getConfig().getCore().h2Prefix + "chunkloaders ("
+                    + "ADD COLUMN IF NOT EXISTS isAdmin BOOLEAN DEFAULT 'false' NOT NULL"
+            );
 
             getConnection().commit();
         } catch (SQLException ex) {
@@ -89,7 +95,8 @@ public final class H2DataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     cList.add(chunkLoader);
                 }
@@ -119,7 +126,8 @@ public final class H2DataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -169,7 +177,8 @@ public final class H2DataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -199,7 +208,8 @@ public final class H2DataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -229,7 +239,8 @@ public final class H2DataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -335,7 +346,7 @@ public final class H2DataStore implements IDataStore {
             Optional<String> locationStr = plugin.serializer.serialize(chunkloader.getLocation());
             Optional<String> vectorStr = plugin.serializer.serialize(chunkloader.getChunk());
             if (locationStr.isPresent() && vectorStr.isPresent()) {
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + plugin.getConfig().getCore().h2Prefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + plugin.getConfig().getCore().h2Prefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
                 statement.setString(1, chunkloader.getUniqueId().toString());
                 statement.setString(2, chunkloader.getWorld().toString());
                 statement.setString(3, chunkloader.getOwner().toString());
@@ -345,6 +356,7 @@ public final class H2DataStore implements IDataStore {
                 statement.setLong(7, chunkloader.getCreation());
                 statement.setBoolean(8, chunkloader.isAlwaysOn());
                 statement.setString(9, chunkloader.getServer());
+                statement.setBoolean(10, chunkloader.isAdmin());
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException ex) {
@@ -375,7 +387,7 @@ public final class H2DataStore implements IDataStore {
             Optional<String> locationStr = plugin.serializer.serialize(chunkloader.getLocation());
             Optional<String> vectorStr = plugin.serializer.serialize(chunkloader.getChunk());
             if (locationStr.isPresent() && vectorStr.isPresent()) {
-                PreparedStatement statement = connection.prepareStatement("MERGE INTO " + plugin.getConfig().getCore().h2Prefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                PreparedStatement statement = connection.prepareStatement("MERGE INTO " + plugin.getConfig().getCore().h2Prefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
                 statement.setString(1, chunkloader.getUniqueId().toString());
                 statement.setString(2, chunkloader.getWorld().toString());
                 statement.setString(3, chunkloader.getOwner().toString());
@@ -385,6 +397,7 @@ public final class H2DataStore implements IDataStore {
                 statement.setLong(7, chunkloader.getCreation());
                 statement.setBoolean(8, chunkloader.isAlwaysOn());
                 statement.setString(9, chunkloader.getServer());
+                statement.setBoolean(10, chunkloader.isAdmin());
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException ex) {

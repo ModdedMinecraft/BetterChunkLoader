@@ -39,6 +39,7 @@ public class CoreConfig {
     public Integer loadDelay = 10;
     public String wandType = "minecraft:blaze_rod";
 
+    public String adminBlockType = "minecraft:emerald_block";
     public Integer maxOnline = 100;
     public String onlineBlockType = "minecraft:iron_block";
     public Integer maxAlwaysOn = 50;
@@ -85,6 +86,9 @@ public class CoreConfig {
         //ChunkLoader
         loadDelay = check(config.getNode("ChunkLoader", "LoadDelay"), loadDelay, "Delay before loading chunkloaders during startup. (Seconds).").getInt();
         wandType = check(config.getNode("ChunkLoader", "WandType"), wandType).getString();
+
+        //ChunkLoader Admin
+        adminBlockType = check(config.getNode("ChunkLoader", "Admin", "BlockType"), adminBlockType).getString();
 
         //ChunkLoader Online
         maxOnline = check(config.getNode("ChunkLoader", "Online", "MaxOnline"), maxOnline).getInt();

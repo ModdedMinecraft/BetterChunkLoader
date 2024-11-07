@@ -46,13 +46,21 @@ public class ListAll implements CommandExecutor {
         for(ChunkLoader chunkLoader : chunkLoaders) {
             if (loaderTypeOp.isPresent()) {
                 String loaderType = loaderTypeOp.get();
-                if (loaderType.equalsIgnoreCase("alwayson") && chunkLoader.isAlwaysOn()) {
+                if (loaderType.equalsIgnoreCase("admin") && chunkLoader.isAdmin()) {
+                    readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                } else if (loaderType.equalsIgnoreCase("alwayson") && chunkLoader.isAlwaysOn()) {
                     readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
                 } else if (loaderType.equalsIgnoreCase("online") && !chunkLoader.isAlwaysOn()) {
                     readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
                 }
             } else {
-                readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                if (chunkLoader.isAdmin()) {
+                    if (sender.hasPermission(Permissions.COMMAND_LIST + ".admin")) {
+                        readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                    }
+                } else {
+                    readableCLs.add(getReadableChunkLoader(chunkLoader, sender));
+                }
             }
         }
         if (readableCLs.isEmpty()) {
@@ -72,6 +80,7 @@ public class ListAll implements CommandExecutor {
         Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner());
 
         String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
+        if (chunkLoader.isAdmin()) type = "Admin";
         String loaded = chunkLoader.isLoadable() ? "&aTrue" : "&cFalse";
         String playerName = "null";
 

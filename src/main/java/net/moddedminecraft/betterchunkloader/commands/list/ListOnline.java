@@ -82,6 +82,7 @@ public class ListOnline implements CommandExecutor {
         Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner());
 
         String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
+        if (chunkLoader.isAdmin()) type = "Admin";
         String loaded = chunkLoader.isLoadable() ? "&aTrue" : "&cFalse";
         String playerName = "null";
 

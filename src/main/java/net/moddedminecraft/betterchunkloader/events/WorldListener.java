@@ -55,7 +55,7 @@ public class WorldListener {
             return;
         }
 
-        if (!block.getState().getType().equals(ChunkLoader.ONLINE_TYPE) && !block.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE)) {
+        if (!block.getState().getType().equals(ChunkLoader.ONLINE_TYPE) && !block.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE) && !block.getState().getType().equals(ChunkLoader.ADMIN_TYPE)) {
             return;
         }
 
@@ -64,12 +64,14 @@ public class WorldListener {
             Player player = event.getCause().last(Player.class).get();
             plugin.getDataStore().getPlayerDataFor(chunkLoader.getOwner()).ifPresent((playerData) -> {
 
+                String type = chunkLoader.isAlwaysOn() ? "Always On" : "Online Only";
+                if (chunkLoader.isAdmin()) type = "Admin";
                 HashMap<String, String> args = new HashMap<>();
                 args.put("player", player.getName());
                 args.put("playerUUID", player.getUniqueId().toString());
                 args.put("ownerName", playerData.getName());
                 args.put("owner", playerData.getUnqiueId().toString());
-                args.put("type", chunkLoader.isAlwaysOn() ? "Always On" : "Online Only");
+                args.put("type", type);
                 args.put("location", Utilities.getReadableLocation(chunkLoader.getWorld(), chunkLoader.getLocation()));
                 args.put("chunks", String.valueOf(chunkLoader.getChunks()));
 

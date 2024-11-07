@@ -95,7 +95,9 @@ public class PlayerListener {
             return;
         }
 
-        if (!clickedBlock.getState().getType().equals(ChunkLoader.ONLINE_TYPE) && !clickedBlock.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE)) {
+        if (!clickedBlock.getState().getType().equals(ChunkLoader.ONLINE_TYPE)
+                && !clickedBlock.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE)
+                && !clickedBlock.getState().getType().equals(ChunkLoader.ADMIN_TYPE)) {
             return;
         }
 
@@ -111,8 +113,15 @@ public class PlayerListener {
                         -1,
                         System.currentTimeMillis(),
                         clickedBlock.getState().getType().equals(ChunkLoader.ALWAYSON_TYPE),
-                        plugin.getConfig().getCore().server
+                        plugin.getConfig().getCore().server,
+                        clickedBlock.getState().getType().equals(ChunkLoader.ADMIN_TYPE)
                 ));
+            }
+            if (clickedBlock.getState().getType().equals(ChunkLoader.ADMIN_TYPE)) {
+                if (!chunkLoader.get().canCreateAdmin(player)) {
+                    player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPermissionCreate));
+                    return;
+                }
             }
             if (!chunkLoader.get().canCreate(player)) {
                 player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().noPermissionCreate));
@@ -125,6 +134,8 @@ public class PlayerListener {
                 args.put("playerName", player.getName());
                 args.put("playerUUID", player.getUniqueId().toString());
                 if (chunkLoader.isPresent()) {
+                    String type = chunkLoader.get().isAlwaysOn() ? "Always On" : "Online Only";
+                    if (chunkLoader.get().isAdmin()) type = "Admin";
                     Optional<PlayerData> playerData = plugin.getDataStore().getPlayerDataFor(chunkLoader.get().getOwner());
                     if (playerData.isPresent()) {
                         args.put("ownerName", playerData.get().getName());
@@ -132,7 +143,7 @@ public class PlayerListener {
                     }
                     args.put("location", Utilities.getReadableLocation(chunkLoader.get().getWorld(), chunkLoader.get().getLocation()));
                     args.put("chunks", String.valueOf(chunkLoader.get().getChunks()));
-                    args.put("type", (chunkLoader.get().isAlwaysOn() ? "Always On" : "Online"));
+                    args.put("type", type);
                     if (chunkLoader.get().canEdit(player)) {
                         plugin.getPaginationService().builder()
                                 .contents(Utilities.parseMessageList(plugin.getConfig().getMessages().infoItems, args))

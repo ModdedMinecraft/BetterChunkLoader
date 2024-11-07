@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public class ChunkLoader extends ChunkLoaderUtil {
 
-    public ChunkLoader(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server) {
-        super(uuid, world, owner, location, chunk, radius, creation, isAlwaysOn, server);
+    public ChunkLoader(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server, Boolean isAdmin) {
+        super(uuid, world, owner, location, chunk, radius, creation, isAlwaysOn, server, isAdmin);
     }
 
     public static class ChunkLoaderSerializer extends VectorSerializer implements TypeSerializer<ChunkLoader> {
@@ -43,7 +43,8 @@ public class ChunkLoader extends ChunkLoaderUtil {
                         node.getNode("radius").getInt(),
                         node.getNode("creation").getLong(),
                         node.getNode("isalwayson").getBoolean(),
-                        node.getNode("server").getString());
+                        node.getNode("server").getString(),
+                        node.getNode("isadmin").getBoolean());
             } else {
                 return new ChunkLoader(
                         node.getNode("uuid").getValue(TypeToken.of(UUID.class)),
@@ -54,7 +55,8 @@ public class ChunkLoader extends ChunkLoaderUtil {
                         node.getNode("radius").getInt(),
                         node.getNode("creation").getLong(),
                         node.getNode("isalwayson").getBoolean(),
-                        node.getNode("server").getString());
+                        node.getNode("server").getString(),
+                        node.getNode("isadmin").getBoolean());
             }
         }
 
@@ -69,6 +71,7 @@ public class ChunkLoader extends ChunkLoaderUtil {
             node.getNode("creation").setValue(chunkLoader.creation);
             node.getNode("isalwayson").setValue(chunkLoader.isAlwaysOn);
             node.getNode("server").setValue(chunkLoader.server);
+            node.getNode("isadmin").setValue(chunkLoader.isAdmin);
         }
     }
 }

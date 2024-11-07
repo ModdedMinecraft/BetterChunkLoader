@@ -50,7 +50,8 @@ public final class MYSQLDataStore implements IDataStore {
                     + "  r TINYINT(3) UNSIGNED NOT NULL,"
                     + "  creation BIGINT(20) NOT NULL,"
                     + "  alwaysOn BOOLEAN NOT NULL,"
-                    + "  server VARCHAR(36) NOT NULL"
+                    + "  server VARCHAR(36) NOT NULL,"
+                    + "  isAdmin BOOLEAN NOT NULL"
                     + ");");
 
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS " + plugin.getConfig().getCore().mysqlPrefix + "playerdata ("
@@ -60,6 +61,10 @@ public final class MYSQLDataStore implements IDataStore {
                     + "onlineAmount SMALLINT(6) UNSIGNED NOT NULL, "
                     + "alwaysOnAmount SMALLINT(6) UNSIGNED NOT NULL"
                     + ");");
+
+            connection.createStatement().executeUpdate("ALTER TABLE  " + plugin.getConfig().getCore().h2Prefix + "chunkloaders ("
+                    + "ADD isAdmin BOOLEAN DEFAULT 'false' NOT NULL AFTER server"
+            );
 
             getConnection().commit();
         } catch (SQLException ex) {
@@ -88,7 +93,8 @@ public final class MYSQLDataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     cList.add(chunkLoader);
                 }
@@ -118,7 +124,8 @@ public final class MYSQLDataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -168,7 +175,8 @@ public final class MYSQLDataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -198,7 +206,8 @@ public final class MYSQLDataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -228,7 +237,8 @@ public final class MYSQLDataStore implements IDataStore {
                             rs.getInt("r"),
                             rs.getLong("creation"),
                             rs.getBoolean("alwaysOn"),
-                            rs.getString("server")
+                            rs.getString("server"),
+                            rs.getBoolean("isAdmin")
                     );
                     clList.add(chunkLoader);
                 }
@@ -334,7 +344,7 @@ public final class MYSQLDataStore implements IDataStore {
             Optional<String> locationStr = plugin.serializer.serialize(chunkloader.getLocation());
             Optional<String> vectorStr = plugin.serializer.serialize(chunkloader.getChunk());
             if (locationStr.isPresent() && vectorStr.isPresent()) {
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + plugin.getConfig().getCore().mysqlPrefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO " + plugin.getConfig().getCore().mysqlPrefix + "chunkloaders VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
                 statement.setString(1, chunkloader.getUniqueId().toString());
                 statement.setString(2, chunkloader.getWorld().toString());
                 statement.setString(3, chunkloader.getOwner().toString());
@@ -344,6 +354,7 @@ public final class MYSQLDataStore implements IDataStore {
                 statement.setLong(7, chunkloader.getCreation());
                 statement.setBoolean(8, chunkloader.isAlwaysOn());
                 statement.setString(9, chunkloader.getServer());
+                statement.setBoolean(10, chunkloader.isAdmin());
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException ex) {
@@ -396,6 +407,7 @@ public final class MYSQLDataStore implements IDataStore {
                                 "'" + chunkloader.getCreation() + "'," +
                                 "?," +
                                 "'" + chunkloader.getServer() +  "'" +
+                                "?," +
                                 ") ON DUPLICATE KEY UPDATE " +
                                 "uuid = '" + chunkloader.getUniqueId().toString() + "'," +
                                 "world = '" + chunkloader.getWorld().toString() + "'," +
@@ -405,9 +417,12 @@ public final class MYSQLDataStore implements IDataStore {
                                 "r = '" + chunkloader.getRadius() + "'," +
                                 "creation = '" + chunkloader.getCreation() + "'," +
                                 "alwaysOn = ?," +
-                                "server = '" + chunkloader.getServer() + "';");
+                                "server = '" + chunkloader.getServer() + "'," +
+                                "isAdmin = ?;");
                 statement.setBoolean(1, chunkloader.isAlwaysOn());
-                statement.setBoolean(2, chunkloader.isAlwaysOn());
+                statement.setBoolean(2, chunkloader.isAdmin());
+                statement.setBoolean(3, chunkloader.isAlwaysOn());
+                statement.setBoolean(4, chunkloader.isAdmin());
                 return statement.executeUpdate() > 0;
             }
         } catch (SQLException ex) {

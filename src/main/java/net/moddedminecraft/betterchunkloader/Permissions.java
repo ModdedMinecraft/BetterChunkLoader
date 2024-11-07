@@ -17,6 +17,7 @@ public class Permissions {
      *
      * betterchunkloader.commands.create.online
      * betterchunkloader.commands.create.alwayson
+     * betterchunkloader.commands.create.admin
      */
     public static final String CREATE = "betterchunkloader.chunkloader.create";
 
@@ -58,6 +59,7 @@ public class Permissions {
      * Sub permissions for betterchunkloader.commands.list
      *
      * betterchunkloader.commands.list.base
+     * betterchunkloader.commands.list.admin
      * betterchunkloader.commands.list.alwayson
      * betterchunkloader.commands.list.online
      * betterchunkloader.commands.list.all

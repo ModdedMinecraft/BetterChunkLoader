@@ -91,7 +91,8 @@ public class MenuListener {
                                     -1,
                                     System.currentTimeMillis(),
                                     chunkLoader.isAlwaysOn(),
-                                    plugin.getConfig().getCore().server)
+                                    plugin.getConfig().getCore().server,
+                                    chunkLoader.isAdmin())
                             );
                             player.sendMessage(Utilities.parseMessage(plugin.getConfig().getMessages().prefix + plugin.getConfig().getMessages().removeSuccess));
                             return;

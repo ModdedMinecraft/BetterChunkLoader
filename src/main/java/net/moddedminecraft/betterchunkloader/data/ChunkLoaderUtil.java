@@ -25,13 +25,15 @@ public class ChunkLoaderUtil {
 
     protected Long creation;
     protected Boolean isAlwaysOn;
+    protected Boolean isAdmin;
 
     protected String server;
 
     public static final BlockType ONLINE_TYPE = Sponge.getRegistry().getType(BlockType.class, BetterChunkLoader.getInstance().getConfig().getCore().onlineBlockType).orElse(BlockTypes.IRON_BLOCK);
     public static final BlockType ALWAYSON_TYPE = Sponge.getRegistry().getType(BlockType.class, BetterChunkLoader.getInstance().getConfig().getCore().alwaysOnBlockType).orElse(BlockTypes.DIAMOND_BLOCK);
+    public static final BlockType ADMIN_TYPE = Sponge.getRegistry().getType(BlockType.class, BetterChunkLoader.getInstance().getConfig().getCore().adminBlockType).orElse(BlockTypes.EMERALD_BLOCK);
 
-    public ChunkLoaderUtil(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server) {
+    public ChunkLoaderUtil(UUID uuid, UUID world, UUID owner, Vector3i location, Vector3i chunk, Integer radius, Long creation, Boolean isAlwaysOn, String server, Boolean isAdmin) {
         this.uuid = uuid;
         this.world = world;
         this.owner = owner;
@@ -41,6 +43,7 @@ public class ChunkLoaderUtil {
         this.creation = creation;
         this.isAlwaysOn = isAlwaysOn;
         this.server = server;
+        this.isAdmin = isAdmin;
     }
 
     public UUID getUniqueId() {
@@ -95,6 +98,10 @@ public class ChunkLoaderUtil {
         return isAlwaysOn;
     }
 
+    public Boolean isAdmin() {
+        return isAdmin;
+    }
+
     public Boolean isExpired() {
         Optional<PlayerData> playerData = BetterChunkLoader.getInstance().getDataStore().getPlayerDataFor(owner);
         if (playerData.isPresent()) {
@@ -108,7 +115,7 @@ public class ChunkLoaderUtil {
 
     public boolean isLoadable() {
         Optional<Player> player = Sponge.getServer().getPlayer(owner);
-        return (player.isPresent() && player.get().isOnline() || (this.isAlwaysOn && !this.isExpired())) && this.blockCheck();
+        return (player.isPresent() && player.get().isOnline() || (this.isAlwaysOn && !this.isExpired()) || this.isAdmin) && this.blockCheck();
     }
 
     public Integer getChunks() {
@@ -127,6 +134,10 @@ public class ChunkLoaderUtil {
         return player.hasPermission(Permissions.CREATE) || player.hasPermission(Permissions.CREATE + "." + (isAlwaysOn() ? "alwayson" : "online"));
     }
 
+    public Boolean canCreateAdmin(Player player) {
+        return player.hasPermission(Permissions.CREATE) || player.hasPermission(Permissions.CREATE + ".admin");
+    }
+
     public Boolean blockCheck() {
         Optional<World> _world = Sponge.getServer().getWorld(this.world);
         if (_world.isPresent()) {
@@ -134,7 +145,9 @@ public class ChunkLoaderUtil {
                 return false;
             }
             BlockState block = _world.get().getBlock(location);
-            if (isAlwaysOn) {
+            if (isAdmin) {
+                return block.getType().equals(ADMIN_TYPE);
+            } else if (isAlwaysOn) {
                 return block.getType().equals(ALWAYSON_TYPE);
             } else {
                 return block.getType().equals(ONLINE_TYPE);
